@@ -202,6 +202,10 @@
         voting = true;
         const name = card.dataset.name;
 
+        // Strip the top-card class immediately so getTopCard() won't find this
+        // card during the 440ms it's still in the DOM flying off screen
+        card.classList.remove('name-card-top');
+
         // Fly the card off screen
         const flyX  = liked ? '130%' : '-130%';
         const flyRot = liked ? '25deg' : '-25deg';
@@ -209,9 +213,9 @@
         card.style.transform  = `translateX(${flyX}) rotate(${flyRot})`;
         card.style.opacity    = '0';
 
-        // Remove from local list and pre-render the next back-card
+        // Remove from local list and promote the next card
         names.shift();
-        if (names.length > 0) promoteCards();
+        if (names.length > 0) promoteCards(card);
 
         // POST to server (fire & forget — don't block the animation)
         fetch('/Swipe/Vote', {
@@ -232,27 +236,37 @@
     }
 
     // ── Card management ────────────────────────────────────────────────────────
-    function promoteCards() {
-        const cards = Array.from(container.querySelectorAll('.name-card'));
+    function promoteCards(flyingCard) {
+        // Exclude the flying card — it's still in the DOM during the exit animation
+        // but must not be treated as part of the active stack
+        const remaining = Array.from(container.querySelectorAll('.name-card'))
+            .filter(c => c !== flyingCard);
 
-        // Promote second card to top
-        cards.forEach((c, i) => {
+        if (remaining.length === 0) return;
+
+        // DOM order: [back ... middle] — the LAST element has the highest z-index
+        // and is visually on top. Promote it to be the new interactive card.
+        remaining.forEach((c, i) => {
+            const stepsFromTop = remaining.length - 1 - i;
             c.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-            if (i === 0) {
+            c.style.zIndex = String(10 - stepsFromTop);
+
+            if (stepsFromTop === 0) {
                 c.classList.add('name-card-top');
-                c.style.cursor = 'grab';
                 c.style.transform = '';
+                c.style.cursor = 'grab';
             } else {
-                const off = i * 9;
-                const sc  = 1 - i * 0.04;
-                c.style.transform = `translateY(${off}px) scale(${sc})`;
+                c.style.transform = `translateY(${stepsFromTop * 9}px) scale(${1 - stepsFromTop * 0.04})`;
+                c.style.cursor = 'default';
             }
         });
 
-        // Append a new back card if we have enough names
+        // Insert a new back card if there are more names queued up
         if (names.length >= 3) {
-            const newCard = buildCard(names[2], 2);
-            newCard.style.transform = 'translateY(18px) scale(0.92)';
+            const stepsFromTop = remaining.length; // furthest from top
+            const newCard = buildCard(names[2], stepsFromTop);
+            newCard.style.zIndex = String(10 - stepsFromTop);
+            newCard.style.transform = `translateY(${stepsFromTop * 9}px) scale(${1 - stepsFromTop * 0.04})`;
             container.insertBefore(newCard, container.firstChild);
         }
     }

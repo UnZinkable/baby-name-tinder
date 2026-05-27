@@ -51,6 +51,16 @@ public class NameService
             .ToDictionary(x => x.Name, x => x.Rank, StringComparer.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Returns a name → meaning dictionary for the given gender.
+    /// </summary>
+    public Dictionary<string, string> GetMeanings(string gender)
+    {
+        return Filter(gender)
+            .Where(n => !string.IsNullOrWhiteSpace(n.Meaning))
+            .ToDictionary(n => n.Name, n => n.Meaning, StringComparer.OrdinalIgnoreCase);
+    }
+
     private IEnumerable<BabyName> Filter(string gender) => gender switch
     {
         "boy"  => _allNames.Where(n => n.Gender == "boy"  || n.Gender == "neutral"),

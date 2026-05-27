@@ -32,7 +32,11 @@
       "WebFetch(domain:www.baby-chick.com)",
       "WebFetch(domain:www.cbsnews.com)",
       "WebFetch(domain:www.mother.ly)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "WebFetch(domain:www.nameberry.com)",
+      "WebFetch(domain:www.behindthename.com)",
+      "Bash(dotnet build *)",
+      "Bash(git add *)"
     ]
   }
 }

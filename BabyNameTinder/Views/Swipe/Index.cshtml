@@ -7,6 +7,8 @@
     var votedCount       = (int)(ViewBag.VotedCount ?? 0);
     var prioritizedCount = (int)(ViewBag.PrioritizedCount ?? 0);
     var ranks            = ViewBag.Ranks as Dictionary<string, int> ?? new();
+    var meaningsJson     = ViewBag.MeaningsJson as string ?? "{}";
+    var meanings         = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(meaningsJson) ?? new();
     var remaining        = Model.Count;
 }
 
@@ -63,6 +65,7 @@
                     var fullName = $"{name} {lastName}";
                     var rank     = ranks.TryGetValue(name, out var r) ? r : 999;
                     var (popLabel, popClass) = GetPopularity(rank);
+                    var meaning  = meanings.TryGetValue(name, out var m) ? m : "";
 
                     <div class="name-card @(i == 0 ? "name-card-top" : "")"
                          data-name="@name"
@@ -72,6 +75,10 @@
                             <div class="name-card-emoji">@GetEmoji(name)</div>
                             <h2 class="name-card-fullname">@fullName</h2>
                             <p class="name-card-firstname text-muted">@name</p>
+                            @if (!string.IsNullOrEmpty(meaning))
+                            {
+                                <p class="name-card-meaning">@meaning</p>
+                            }
                             <span class="popularity-badge @popClass">@popLabel</span>
                         </div>
                         <div class="like-indicator">❤️ LIKE</div>
@@ -102,6 +109,7 @@
 <input type="hidden" id="remainingNames" value="@System.Text.Json.JsonSerializer.Serialize(Model)" />
 <input type="hidden" id="lastName"       value="@lastName" />
 <input type="hidden" id="nameRanks"      value="@ViewBag.RanksJson" />
+<input type="hidden" id="nameMeanings"   value="@ViewBag.MeaningsJson" />
 <input type="hidden" id="totalCount"     value="@totalCount" />
 <input type="hidden" id="votedCount"     value="@votedCount" />
 @Html.AntiForgeryToken()

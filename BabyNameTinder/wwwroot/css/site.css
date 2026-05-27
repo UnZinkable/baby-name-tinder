@@ -225,6 +225,13 @@ body {
     font-size: 1rem;
     margin: 0;
 }
+.name-card-meaning {
+    font-size: 0.82rem;
+    color: #8c6e8a;
+    font-style: italic;
+    margin: 0.35rem 0 0;
+    letter-spacing: 0.01em;
+}
 
 /* ── Swipe stamp indicators ── */
 .like-indicator, .pass-indicator {

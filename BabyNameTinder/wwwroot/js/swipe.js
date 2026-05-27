@@ -13,8 +13,9 @@
     if (!allNamesEl) return;
 
     let names = JSON.parse(allNamesEl.value || '[]');
-    const lastName  = lastNameEl ? lastNameEl.value : '';
-    const nameRanks = JSON.parse(document.getElementById('nameRanks')?.value || '{}');
+    const lastName    = lastNameEl ? lastNameEl.value : '';
+    const nameRanks   = JSON.parse(document.getElementById('nameRanks')?.value    || '{}');
+    const nameMeanings = JSON.parse(document.getElementById('nameMeanings')?.value || '{}');
 
     const emojis = ['🌸', '⭐', '🌟', '✨', '🌿', '🦋', '🌈', '🍀', '🌙', '💫', '🌺', '🎀', '🦄', '🌻', '🍁'];
     function getEmoji(name) {
@@ -278,13 +279,15 @@
         div.style.zIndex  = 10 - stackIndex;
         div.style.cursor  = stackIndex === 0 ? 'grab' : 'default';
 
-        const pop = getPopularity(name);
+        const pop     = getPopularity(name);
+        const meaning = nameMeanings[name] || '';
         div.innerHTML = `
             <div class="card-overlay"></div>
             <div class="name-card-inner">
                 <div class="name-card-emoji">${getEmoji(name)}</div>
                 <h2 class="name-card-fullname">${esc(name)} ${esc(lastName)}</h2>
                 <p class="name-card-firstname text-muted">${esc(name)}</p>
+                ${meaning ? `<p class="name-card-meaning">${esc(meaning)}</p>` : ''}
                 <span class="popularity-badge ${pop.cls}">${pop.label}</span>
             </div>
             <div class="like-indicator">❤️ LIKE</div>

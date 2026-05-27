@@ -61,6 +61,9 @@ public class SwipeController : Controller
         // ── Popularity ranks ───────────────────────────────────────────────────
         var ranks = _names.GetRanks(partnership.Gender);
 
+        // ── Meanings ───────────────────────────────────────────────────────────
+        var meanings = _names.GetMeanings(partnership.Gender);
+
         ViewBag.LastName          = partnership.LastName;
         ViewBag.TotalCount        = _names.GetNames(partnership.Gender, UserId).Count;
         ViewBag.VotedCount        = votedSet.Count;
@@ -68,6 +71,7 @@ public class SwipeController : Controller
         ViewBag.PrioritizedCount  = prioritized.Count;   // used to show the smart-sort hint
         ViewBag.Ranks             = ranks;
         ViewBag.RanksJson         = JsonSerializer.Serialize(ranks);
+        ViewBag.MeaningsJson      = JsonSerializer.Serialize(meanings);
 
         return View(unvoted);
     }

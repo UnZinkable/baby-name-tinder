@@ -1,0 +1,173 @@
+@{
+    ViewData["Title"] = "My Votes";
+    var lastName = ViewBag.LastName as string ?? "";
+    var liked    = ViewBag.Liked    as List<string> ?? new();
+    var disliked = ViewBag.Disliked as List<string> ?? new();
+    var ranks    = ViewBag.Ranks    as Dictionary<string, int>    ?? new();
+    var meanings = ViewBag.Meanings as Dictionary<string, string> ?? new();
+}
+
+<div class="container py-4" style="max-width: 720px;">
+
+    <div class="d-flex align-items-center justify-content-between mb-1">
+        <h1 class="fw-bold h3 mb-0">🗳️ My Votes</h1>
+        <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetModal">
+            <i class="bi bi-arrow-counterclockwise"></i> Reset All
+        </button>
+    </div>
+    <p class="text-muted small mb-4">
+        <span class="text-success fw-semibold">@liked.Count liked</span> &nbsp;·&nbsp;
+        <span class="text-danger fw-semibold">@disliked.Count passed</span> &nbsp;·&nbsp;
+        @(liked.Count + disliked.Count) total
+    </p>
+
+    @if (TempData["Success"] is string successMsg)
+    {
+        <div class="alert alert-success rounded-4 py-2 mb-4">
+            <i class="bi bi-check-circle-fill"></i> @successMsg
+        </div>
+    }
+
+    @* ── Tab navigation ── *@
+    <ul class="nav nav-pills mb-3">
+        <li class="nav-item">
+            <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#liked-pane" type="button">
+                ❤️ Liked <span class="badge bg-success ms-1">@liked.Count</span>
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#passed-pane" type="button">
+                ✕ Passed <span class="badge bg-secondary ms-1">@disliked.Count</span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+
+        @* ── Liked pane ── *@
+        <div class="tab-pane fade show active" id="liked-pane">
+            @if (!liked.Any())
+            {
+                <div class="text-center py-5 text-muted">
+                    <div style="font-size:2.5rem">💭</div>
+                    <p class="mt-2">No likes yet — go swipe some names!</p>
+                    <a asp-controller="Swipe" asp-action="Index" class="btn btn-primary btn-sm mt-1">
+                        Start Swiping →
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex flex-column gap-2">
+                    @foreach (var name in liked)
+                    {
+                        var rank    = ranks.TryGetValue(name, out var r) ? r : 999;
+                        var meaning = meanings.TryGetValue(name, out var m) ? m : "";
+                        var (popLabel, popClass) = GetPopularity(rank);
+                        <div class="vote-row d-flex align-items-center gap-3 p-3 rounded-4"
+                             style="background:#d1f2e1; border:1px solid rgba(0,0,0,0.06);">
+                            <div class="vote-row-icon">❤️</div>
+                            <div class="vote-row-emoji">@GetEmoji(name)</div>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold">@name @lastName</div>
+                                @if (!string.IsNullOrEmpty(meaning))
+                                {
+                                    <div class="name-card-meaning mb-1">@meaning</div>
+                                }
+                                <span class="popularity-badge @popClass">@popLabel</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        @* ── Passed pane ── *@
+        <div class="tab-pane fade" id="passed-pane">
+            @if (!disliked.Any())
+            {
+                <div class="text-center py-5 text-muted">
+                    <div style="font-size:2.5rem">🎉</div>
+                    <p class="mt-2">You haven't passed on any names yet.</p>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex flex-column gap-2">
+                    @foreach (var name in disliked)
+                    {
+                        var rank    = ranks.TryGetValue(name, out var r2) ? r2 : 999;
+                        var meaning = meanings.TryGetValue(name, out var m2) ? m2 : "";
+                        var (popLabel, popClass) = GetPopularity(rank);
+                        <div class="vote-row d-flex align-items-center gap-3 p-3 rounded-4"
+                             style="background:#fde8ea; border:1px solid rgba(0,0,0,0.06);">
+                            <div class="vote-row-icon text-danger fw-bold">✕</div>
+                            <div class="vote-row-emoji">@GetEmoji(name)</div>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold">@name @lastName</div>
+                                @if (!string.IsNullOrEmpty(meaning))
+                                {
+                                    <div class="name-card-meaning mb-1">@meaning</div>
+                                }
+                                <span class="popularity-badge @popClass">@popLabel</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+    </div>
+
+    @* ── Bottom actions ── *@
+    <div class="d-flex gap-2 mt-4">
+        <a asp-controller="Swipe" asp-action="Index" class="btn btn-primary">
+            <i class="bi bi-hand-index-thumb"></i> Keep Swiping
+        </a>
+        <a asp-controller="Match" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-heart-fill text-danger"></i> View Matches
+        </a>
+    </div>
+</div>
+
+@* ── Reset confirmation modal ── *@
+<div class="modal fade" id="resetModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Reset All Votes?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-muted">
+                This will clear all your likes and passes. Any mutual matches you contributed to will also be removed.
+                <strong>This cannot be undone.</strong>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form asp-controller="Votes" asp-action="Reset" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-arrow-counterclockwise"></i> Yes, Reset Everything
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    static string GetEmoji(string name)
+    {
+        var emojis = new[] { "🌸", "⭐", "🌟", "✨", "🌿", "🦋", "🌈", "🍀", "🌙", "💫", "🌺", "🎀", "🦄", "🌻", "🍁" };
+        return emojis[Math.Abs(name.GetHashCode()) % emojis.Length];
+    }
+
+    static (string label, string cssClass) GetPopularity(int rank) => rank switch
+    {
+        <= 10  => ("🔥 Top 10",      "pop-hot"),
+        <= 25  => ("⭐ Top 25",      "pop-top"),
+        <= 75  => ("💜 Popular",     "pop-popular"),
+        <= 150 => ("🌿 Less Common", "pop-less"),
+        _      => ("✨ Rare",        "pop-rare")
+    };
+}

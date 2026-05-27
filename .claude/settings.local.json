@@ -36,7 +36,10 @@
       "WebFetch(domain:www.nameberry.com)",
       "WebFetch(domain:www.behindthename.com)",
       "Bash(dotnet build *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -m 'Add name meanings to swipe cards *)",
+      "Bash(git push *)",
+      "Bash(git commit -m 'Add My Votes page and reset votes feature *)"
     ]
   }
 }

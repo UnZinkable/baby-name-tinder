@@ -67,4 +67,31 @@ public class VoteService
         return await _blobs.GetAsync<MatchList>(MatchesContainer, $"{partnershipId}.json")
             ?? new MatchList { PartnershipId = partnershipId };
     }
+
+    /// <summary>
+    /// Clears all of this user's votes and removes any matches they contributed to.
+    /// </summary>
+    public async Task ResetVotesAsync(Partnership partnership, string userId)
+    {
+        // Remember which names the user liked so we can scrub them from matches
+        var myVotes = await GetVotesAsync(partnership.Id, userId);
+        var myLikes = myVotes.Votes
+            .Where(kv => kv.Value)
+            .Select(kv => kv.Key)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        // Overwrite with empty votes blob
+        await _blobs.SetAsync(VotesContainer, VoteKey(partnership.Id, userId),
+            new UserVotes { UserId = userId, PartnershipId = partnership.Id });
+
+        // Remove matches that depended on this user's likes
+        if (myLikes.Count > 0)
+        {
+            var matches = await GetMatchListAsync(partnership.Id);
+            var countBefore = matches.Names.Count;
+            matches.Names.RemoveAll(n => myLikes.Contains(n));
+            if (matches.Names.Count != countBefore)
+                await _blobs.SetAsync(MatchesContainer, $"{partnership.Id}.json", matches);
+        }
+    }
 }

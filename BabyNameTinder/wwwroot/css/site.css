@@ -157,23 +157,37 @@ body {
     align-items: center;
     justify-content: center;
     padding: 2rem;
-    cursor: grab;
     border: 1px solid #ffe0eb;
-    transform: translateY(var(--card-offset, 0px)) scale(calc(1 - var(--card-index, 0) * 0.03));
-    transition: box-shadow 0.2s;
     user-select: none;
     -webkit-user-select: none;
+    will-change: transform;
+    overflow: hidden;
 }
 
-.name-card-top {
-    cursor: grab;
-    transition: transform 0.05s;
+/* Back cards stack up slightly */
+.name-card:not(.name-card-top) {
+    transform: translateY(9px) scale(0.96);
 }
-.name-card-top:active { cursor: grabbing; }
+.name-card:not(.name-card-top):nth-child(1) {
+    transform: translateY(18px) scale(0.92);
+}
+
+/* Color overlay — fills card during drag */
+.card-overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    pointer-events: none;
+    background: transparent;
+    transition: background 0.06s;
+    z-index: 1;
+}
 
 .name-card-inner {
     text-align: center;
     pointer-events: none;
+    position: relative;
+    z-index: 2;
 }
 .name-card-emoji { font-size: 3.5rem; margin-bottom: 1rem; }
 .name-card-fullname {
@@ -188,72 +202,62 @@ body {
     margin: 0;
 }
 
-/* Swipe indicators */
+/* ── Swipe stamp indicators ── */
 .like-indicator, .pass-indicator {
     position: absolute;
-    top: 28px;
-    font-size: 1.4rem;
-    font-weight: 800;
+    top: 32px;
+    font-size: 1.25rem;
+    font-weight: 900;
     pointer-events: none;
-    transition: opacity 0.1s;
-    transform: rotate(-15deg);
+    opacity: 0;
     border: 3px solid;
     border-radius: 8px;
-    padding: 2px 12px;
+    padding: 4px 14px;
+    letter-spacing: 0.05em;
+    z-index: 3;
+    transition: opacity 0.06s;
 }
 .like-indicator {
-    right: 20px;
+    right: 22px;
+    color: #198754;
     border-color: #198754;
+    transform: rotate(-12deg);
 }
 .pass-indicator {
-    left: 20px;
+    left: 22px;
+    color: #dc3545;
     border-color: #dc3545;
-    transform: rotate(15deg);
+    transform: rotate(12deg);
 }
 
-/* Swipe animations */
-.name-card.swipe-right {
-    animation: swipeRight 0.4s ease forwards;
-}
-.name-card.swipe-left {
-    animation: swipeLeft 0.4s ease forwards;
-}
-
-@keyframes swipeRight {
-    to { transform: translateX(120%) rotate(20deg); opacity: 0; }
-}
-@keyframes swipeLeft {
-    to { transform: translateX(-120%) rotate(-20deg); opacity: 0; }
-}
-
-/* ===== Action Buttons ===== */
+/* ── Action Buttons ── */
 .action-buttons { gap: 2rem !important; }
 
 .action-btn {
-    width: 64px;
-    height: 64px;
+    width: 68px;
+    height: 68px;
     border-radius: 50%;
     border: none;
     font-size: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.13);
 }
-.action-btn:hover {
-    transform: scale(1.1);
-}
-.action-btn:active { transform: scale(0.95); }
+.action-btn:hover  { transform: scale(1.12); }
+.action-btn:active { transform: scale(0.9);  }
 
 .action-btn-pass {
     background: white;
     color: #dc3545;
     border: 2px solid #f8d7da;
+    box-shadow: 0 4px 20px rgba(220,53,69,0.18);
 }
 .action-btn-like {
     background: linear-gradient(135deg, #ff6b9d, #ff4757);
     color: white;
+    box-shadow: 0 4px 20px rgba(255,71,87,0.35);
 }
 
 /* ===== Empty state ===== */
@@ -279,7 +283,7 @@ body {
 }
 
 /* ===== Progress bar ===== */
-.progress-bar { transition: width 0.4s ease; }
+.progress-bar { transition: width 0.5s ease; }
 
 /* ===== Responsive ===== */
 @media (max-width: 480px) {

@@ -54,15 +54,16 @@
                     var fullName = $"{name} {lastName}";
                     <div class="name-card @(i == 0 ? "name-card-top" : "")"
                          data-name="@name"
-                         data-index="@i"
-                         style="z-index: @(10 - i); --card-offset: @(i * 8)px;">
+                         style="z-index: @(10 - i); cursor: @(i == 0 ? "grab" : "default");"
+                         >
+                        <div class="card-overlay"></div>
                         <div class="name-card-inner">
                             <div class="name-card-emoji">@GetEmoji(name)</div>
                             <h2 class="name-card-fullname">@fullName</h2>
                             <p class="name-card-firstname text-muted">@name</p>
                         </div>
-                        <div class="like-indicator text-success" style="opacity:0">❤️ Like</div>
-                        <div class="pass-indicator text-danger" style="opacity:0">✕ Pass</div>
+                        <div class="like-indicator">❤️ LIKE</div>
+                        <div class="pass-indicator">✕ NOPE</div>
                     </div>
                 }
             }
@@ -79,7 +80,7 @@
                     <i class="bi bi-heart-fill"></i>
                 </button>
             </div>
-            <p class="text-center text-muted small mt-2">
+            <p class="text-center text-muted small mt-2 swipe-hint">
                 ← pass &nbsp;|&nbsp; like →
             </p>
         }

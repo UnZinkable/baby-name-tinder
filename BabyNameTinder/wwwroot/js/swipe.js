@@ -1,15 +1,13 @@
 /**
- * swipe.js — Baby Name Tinder swipe logic
- * Handles drag/touch swipe on the top name card and button fallbacks.
+ * swipe.js — Baby Name Tinder
+ * Fluid drag/fling swipe with color overlay, velocity detection, and smooth animations.
  */
-
 (function () {
     'use strict';
 
     const container = document.getElementById('cardContainer');
     if (!container) return;
 
-    // All unvoted names (JSON array passed from server)
     const allNamesEl = document.getElementById('remainingNames');
     const lastNameEl = document.getElementById('lastName');
     if (!allNamesEl) return;
@@ -18,106 +16,174 @@
     const lastName = lastNameEl ? lastNameEl.value : '';
 
     const emojis = ['🌸', '⭐', '🌟', '✨', '🌿', '🦋', '🌈', '🍀', '🌙', '💫', '🌺', '🎀', '🦄', '🌻', '🍁'];
-
     function getEmoji(name) {
-        let hash = 0;
-        for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-        return emojis[Math.abs(hash) % emojis.length];
+        let h = 0;
+        for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
+        return emojis[Math.abs(h) % emojis.length];
     }
 
-    // ---- Swipe state ----
+    // ── State ──────────────────────────────────────────────────────────────────
     let isDragging = false;
     let startX = 0, startY = 0;
-    let currentX = 0;
+    let currentX = 0, currentY = 0;
+    let velocityX = 0;
+    let lastMoveX = 0, lastMoveTime = 0;
+    let rafId = null;
     let topCard = null;
-    const SWIPE_THRESHOLD = 80;
+    let voting = false;
 
-    function getTopCard() {
-        return container.querySelector('.name-card-top');
-    }
+    const SWIPE_THRESHOLD = 90;   // px to count as a deliberate swipe
+    const VELOCITY_THRESHOLD = 0.4; // px/ms — fast fling triggers swipe under distance threshold
 
-    function getLikeIndicator(card) { return card.querySelector('.like-indicator'); }
-    function getPassIndicator(card) { return card.querySelector('.pass-indicator'); }
+    // ── Pointer events ─────────────────────────────────────────────────────────
+    function getTopCard() { return container.querySelector('.name-card-top'); }
 
-    // ---- Drag handlers ----
-    function onPointerDown(e) {
+    function pointerDown(e) {
+        if (voting) return;
         topCard = getTopCard();
         if (!topCard || !topCard.contains(e.target)) return;
+
         isDragging = true;
-        startX = e.touches ? e.touches[0].clientX : e.clientX;
-        startY = e.touches ? e.touches[0].clientY : e.clientY;
+        const pt = e.touches ? e.touches[0] : e;
+        startX = pt.clientX;
+        startY = pt.clientY;
         currentX = 0;
+        currentY = 0;
+        velocityX = 0;
+        lastMoveX = startX;
+        lastMoveTime = Date.now();
+
         topCard.style.transition = 'none';
+        topCard.style.cursor = 'grabbing';
+        cancelAnimationFrame(rafId);
     }
 
-    function onPointerMove(e) {
+    function pointerMove(e) {
         if (!isDragging || !topCard) return;
-        const x = e.touches ? e.touches[0].clientX : e.clientX;
-        const y = e.touches ? e.touches[0].clientY : e.clientY;
-        currentX = x - startX;
-        const currentY = y - startY;
-        const rotate = currentX * 0.08;
 
-        topCard.style.transform = `translate(${currentX}px, ${currentY * 0.3}px) rotate(${rotate}deg)`;
+        const pt = e.touches ? e.touches[0] : e;
+        const x = pt.clientX;
+        const y = pt.clientY;
+        const now = Date.now();
+        const dt = now - lastMoveTime;
 
-        // Show indicators
-        const progress = Math.min(Math.abs(currentX) / SWIPE_THRESHOLD, 1);
-        const likeEl = getLikeIndicator(topCard);
-        const passEl = getPassIndicator(topCard);
-
-        if (currentX > 0) {
-            likeEl.style.opacity = progress;
-            passEl.style.opacity = 0;
-        } else {
-            passEl.style.opacity = progress;
-            likeEl.style.opacity = 0;
+        // Velocity (exponential smoothing)
+        if (dt > 0) {
+            const rawVel = (x - lastMoveX) / dt;
+            velocityX = velocityX * 0.7 + rawVel * 0.3;
         }
+        lastMoveX = x;
+        lastMoveTime = now;
 
-        // Tilt background cards
-        updateBackgroundCards();
+        currentX = x - startX;
+        currentY = y - startY;
+
+        rafId = requestAnimationFrame(applyDragTransform);
     }
 
-    function onPointerUp(e) {
+    function pointerUp() {
         if (!isDragging || !topCard) return;
         isDragging = false;
-        topCard.style.transition = '';
+        topCard.style.cursor = '';
+        cancelAnimationFrame(rafId);
 
-        if (Math.abs(currentX) >= SWIPE_THRESHOLD) {
+        const didFling = Math.abs(velocityX) > VELOCITY_THRESHOLD && Math.sign(velocityX) === Math.sign(currentX);
+        const didSwipe = Math.abs(currentX) >= SWIPE_THRESHOLD || didFling;
+
+        if (didSwipe) {
             vote(currentX > 0);
         } else {
-            // Snap back
-            topCard.style.transform = '';
-            getLikeIndicator(topCard).style.opacity = 0;
-            getPassIndicator(topCard).style.opacity = 0;
+            snapBack();
         }
+    }
+
+    function applyDragTransform() {
+        if (!topCard) return;
+        const rotate = currentX * 0.07;
+        topCard.style.transform = `translate(${currentX}px, ${currentY * 0.25}px) rotate(${rotate}deg)`;
+
+        // Colour overlay
+        const progress = Math.min(Math.abs(currentX) / SWIPE_THRESHOLD, 1);
+        const overlay = topCard.querySelector('.card-overlay');
+        const likeEl  = topCard.querySelector('.like-indicator');
+        const passEl  = topCard.querySelector('.pass-indicator');
+
+        if (currentX > 0) {
+            overlay.style.background = `rgba(25,135,84,${progress * 0.25})`;
+            likeEl.style.opacity = progress;
+            passEl.style.opacity = 0;
+        } else if (currentX < 0) {
+            overlay.style.background = `rgba(220,53,69,${progress * 0.25})`;
+            passEl.style.opacity = progress;
+            likeEl.style.opacity = 0;
+        } else {
+            overlay.style.background = 'transparent';
+            likeEl.style.opacity = 0;
+            passEl.style.opacity = 0;
+        }
+    }
+
+    function snapBack() {
+        topCard.style.transition = 'transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        topCard.style.transform = 'translate(0,0) rotate(0deg)';
+        const overlay = topCard.querySelector('.card-overlay');
+        const likeEl  = topCard.querySelector('.like-indicator');
+        const passEl  = topCard.querySelector('.pass-indicator');
+        overlay.style.background = 'transparent';
+        likeEl.style.opacity = 0;
+        passEl.style.opacity = 0;
         topCard = null;
     }
 
     // Touch
-    container.addEventListener('touchstart', onPointerDown, { passive: true });
-    document.addEventListener('touchmove', onPointerMove, { passive: true });
-    document.addEventListener('touchend', onPointerUp);
+    container.addEventListener('touchstart', pointerDown, { passive: true });
+    document.addEventListener('touchmove',   pointerMove, { passive: true });
+    document.addEventListener('touchend',    pointerUp);
+    document.addEventListener('touchcancel', pointerUp);
 
     // Mouse
-    container.addEventListener('mousedown', onPointerDown);
-    document.addEventListener('mousemove', onPointerMove);
-    document.addEventListener('mouseup', onPointerUp);
+    container.addEventListener('mousedown', pointerDown);
+    document.addEventListener('mousemove',  pointerMove);
+    document.addEventListener('mouseup',    pointerUp);
+    document.addEventListener('mouseleave', pointerUp);
 
-    // ---- Keyboard ----
+    // ── Keyboard ───────────────────────────────────────────────────────────────
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') vote(true);
-        if (e.key === 'ArrowLeft') vote(false);
+        if (e.key === 'ArrowRight') triggerButtonVote(true);
+        if (e.key === 'ArrowLeft')  triggerButtonVote(false);
     });
 
-    // ---- Buttons ----
+    // ── Buttons ────────────────────────────────────────────────────────────────
     const btnLike = document.getElementById('btnLike');
     const btnPass = document.getElementById('btnPass');
-    if (btnLike) btnLike.addEventListener('click', () => vote(true));
-    if (btnPass) btnPass.addEventListener('click', () => vote(false));
+    if (btnLike) btnLike.addEventListener('click', () => triggerButtonVote(true));
+    if (btnPass) btnPass.addEventListener('click', () => triggerButtonVote(false));
 
-    // ---- Voting ----
-    let voting = false;
+    /** Animate a button press: card leans then flies off */
+    async function triggerButtonVote(liked) {
+        if (voting || names.length === 0) return;
+        const card = getTopCard();
+        if (!card) return;
 
+        // Quick lean in the direction
+        card.style.transition = 'transform 0.12s ease-out';
+        card.style.transform = liked
+            ? 'translateX(18px) rotate(4deg)'
+            : 'translateX(-18px) rotate(-4deg)';
+
+        // Show indicator immediately
+        const overlay = card.querySelector('.card-overlay');
+        const likeEl  = card.querySelector('.like-indicator');
+        const passEl  = card.querySelector('.pass-indicator');
+        overlay.style.background = liked ? 'rgba(25,135,84,0.2)' : 'rgba(220,53,69,0.2)';
+        if (liked) { likeEl.style.opacity = 1; passEl.style.opacity = 0; }
+        else       { passEl.style.opacity = 1; likeEl.style.opacity = 0; }
+
+        await delay(120);
+        vote(liked);
+    }
+
+    // ── Vote ───────────────────────────────────────────────────────────────────
     async function vote(liked) {
         if (voting || names.length === 0) return;
         const card = getTopCard();
@@ -126,116 +192,101 @@
         voting = true;
         const name = card.dataset.name;
 
-        // Animate card out
-        card.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
-        if (liked) {
-            getLikeIndicator(card).style.opacity = 1;
-            card.style.transform = 'translateX(120%) rotate(20deg)';
-        } else {
-            getPassIndicator(card).style.opacity = 1;
-            card.style.transform = 'translateX(-120%) rotate(-20deg)';
-        }
-        card.style.opacity = '0';
+        // Fly the card off screen
+        const flyX  = liked ? '130%' : '-130%';
+        const flyRot = liked ? '25deg' : '-25deg';
+        card.style.transition = 'transform 0.42s cubic-bezier(0.55, 0, 1, 0.45), opacity 0.35s ease';
+        card.style.transform  = `translateX(${flyX}) rotate(${flyRot})`;
+        card.style.opacity    = '0';
 
-        // Remove first name from our list
+        // Remove from local list and pre-render the next back-card
         names.shift();
+        if (names.length > 0) promoteCards();
 
-        // Build next card immediately
-        if (names.length > 0) {
-            addNextCard();
-        }
+        // POST to server (fire & forget — don't block the animation)
+        fetch('/Swipe/Vote', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': getToken()
+            },
+            body: JSON.stringify({ name, liked })
+        }).catch(err => console.error('Vote failed:', err));
 
-        // POST vote to server
-        try {
-            await fetch('/Swipe/Vote', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': getAntiForgeryToken()
-                },
-                body: JSON.stringify({ name, liked })
-            });
-        } catch (err) {
-            console.error('Vote failed:', err);
-        }
-
-        // Remove the old card after animation
-        setTimeout(() => {
-            card.remove();
-            updateBackgroundCards();
-            updateProgress();
-            if (names.length === 0) showAllDone();
-            voting = false;
-        }, 420);
+        // Clean up after animation
+        await delay(440);
+        card.remove();
+        updateProgress();
+        if (names.length === 0) showAllDone();
+        voting = false;
     }
 
-    function addNextCard() {
-        // The card that was at index 1 is now becoming the top card
-        const existingCards = container.querySelectorAll('.name-card');
-        existingCards.forEach((c, i) => {
-            c.style.transition = 'transform 0.3s ease';
-            c.style.setProperty('--card-offset', `${i * 8}px`);
+    // ── Card management ────────────────────────────────────────────────────────
+    function promoteCards() {
+        const cards = Array.from(container.querySelectorAll('.name-card'));
+
+        // Promote second card to top
+        cards.forEach((c, i) => {
+            c.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
             if (i === 0) {
                 c.classList.add('name-card-top');
+                c.style.cursor = 'grab';
                 c.style.transform = '';
+            } else {
+                const off = i * 9;
+                const sc  = 1 - i * 0.04;
+                c.style.transform = `translateY(${off}px) scale(${sc})`;
             }
         });
 
-        // Add a new card at the back if we have more names
-        const backIndex = existingCards.length; // how many cards will be showing after removal
-        const nameIndex = backIndex; // next name to pre-render at the back
-        if (nameIndex < names.length && backIndex < 3) {
-            const name = names[nameIndex];
-            const card = buildCard(name, backIndex);
-            container.insertBefore(card, container.firstChild);
+        // Append a new back card if we have enough names
+        if (names.length >= 3) {
+            const newCard = buildCard(names[2], 2);
+            newCard.style.transform = 'translateY(18px) scale(0.92)';
+            container.insertBefore(newCard, container.firstChild);
         }
     }
 
-    function buildCard(name, index) {
+    function buildCard(name, stackIndex) {
         const div = document.createElement('div');
-        div.className = 'name-card' + (index === 0 ? ' name-card-top' : '');
+        div.className = 'name-card' + (stackIndex === 0 ? ' name-card-top' : '');
         div.dataset.name = name;
-        div.dataset.index = index;
-        div.style.zIndex = 10 - index;
-        div.style.setProperty('--card-offset', `${index * 8}px`);
+        div.style.zIndex  = 10 - stackIndex;
+        div.style.cursor  = stackIndex === 0 ? 'grab' : 'default';
 
         div.innerHTML = `
+            <div class="card-overlay"></div>
             <div class="name-card-inner">
                 <div class="name-card-emoji">${getEmoji(name)}</div>
-                <h2 class="name-card-fullname">${escapeHtml(name)} ${escapeHtml(lastName)}</h2>
-                <p class="name-card-firstname text-muted">${escapeHtml(name)}</p>
+                <h2 class="name-card-fullname">${esc(name)} ${esc(lastName)}</h2>
+                <p class="name-card-firstname text-muted">${esc(name)}</p>
             </div>
-            <div class="like-indicator text-success" style="opacity:0">❤️ Like</div>
-            <div class="pass-indicator text-danger" style="opacity:0">✕ Pass</div>
+            <div class="like-indicator">❤️ LIKE</div>
+            <div class="pass-indicator">✕ NOPE</div>
         `;
         return div;
     }
 
-    function updateBackgroundCards() {
-        const cards = container.querySelectorAll('.name-card');
-        cards.forEach((card, i) => {
-            if (i === 0) return; // top card managed by drag
-            const offset = i * 8;
-            const scale = 1 - i * 0.03;
-            card.style.transform = `translateY(${offset}px) scale(${scale})`;
-        });
-    }
+    // ── Progress ───────────────────────────────────────────────────────────────
+    let votedSoFar = (() => {
+        const el = document.querySelector('.d-flex.justify-content-between span:first-child');
+        return parseInt(el?.textContent ?? '0') || 0;
+    })();
+    const totalNames = (() => {
+        const el = document.querySelector('.d-flex.justify-content-between span:first-child');
+        const txt = el?.textContent ?? '';
+        return parseInt(txt.split('of')[1]) || 0;
+    })();
 
     function updateProgress() {
-        // Re-fetch progress bar if present
-        const bar = document.querySelector('.progress-bar');
-        const remaining = names.length;
-        const total = parseInt(document.querySelector('.progress')?.parentElement?.querySelector('span:last-child')?.textContent ?? '0');
-        if (bar) {
-            const voted = parseInt(document.querySelector('.d-flex.justify-content-between span:first-child')?.textContent?.split(' ')[0] ?? '0') + 1;
-            bar.style.width = `${total > 0 ? (voted / (voted + remaining) * 100) : 0}%`;
-        }
-
-        // Update remaining count label
-        const spans = document.querySelectorAll('.d-flex.justify-content-between span');
-        if (spans.length >= 2) {
-            spans[1].textContent = `${remaining} remaining`;
-        }
+        votedSoFar++;
+        const bar    = document.querySelector('.progress-bar');
+        const label1 = document.querySelector('.d-flex.justify-content-between span:first-child');
+        const label2 = document.querySelector('.d-flex.justify-content-between span:last-child');
+        if (bar && totalNames > 0)
+            bar.style.width = `${Math.round(votedSoFar / totalNames * 100)}%`;
+        if (label1) label1.textContent = `${votedSoFar} of ${totalNames} names reviewed`;
+        if (label2) label2.textContent = `${names.length} remaining`;
     }
 
     function showAllDone() {
@@ -248,26 +299,26 @@
                     <i class="bi bi-heart-fill"></i> View Matches
                 </a>
             </div>`;
-        const buttons = document.querySelector('.action-buttons');
-        if (buttons) buttons.style.display = 'none';
-        const hint = buttons?.nextElementSibling;
-        if (hint) hint.style.display = 'none';
+        document.querySelector('.action-buttons')?.remove();
+        document.querySelector('.swipe-hint')?.remove();
     }
 
-    function getAntiForgeryToken() {
+    // ── Helpers ────────────────────────────────────────────────────────────────
+    function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    function getToken() {
         return document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
     }
 
-    function escapeHtml(str) {
+    function esc(str) {
         const d = document.createElement('div');
         d.textContent = str;
         return d.innerHTML;
     }
 
-    // Listen for match events from layout SignalR
+    // Match event from SignalR (layout.cshtml)
     document.addEventListener('nameMatch', (e) => {
-        // Could show inline match overlay in swipe page too
-        console.log('Match!', e.detail);
+        if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
     });
 
 })();

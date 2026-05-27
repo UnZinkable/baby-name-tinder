@@ -14,7 +14,25 @@
       "Bash(Get-ChildItem *)",
       "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\kuram\\\\Desktop\\\\Baby Name Tinder\" | Where-Object { $_.Name -ne '.git' -and $_.Name -ne '.claude' })",
       "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\kuram\\\\Desktop\\\\Pokemon Site\\\\PokemonTracker\\\\Views\" -Recurse | Where-Object { $_.Extension -eq \".cshtml\" } | Select-Object FullName)",
-      "PowerShell(head *)"
+      "PowerShell(head *)",
+      "WebFetch(domain:www.ssa.gov)",
+      "WebSearch",
+      "WebFetch(domain:nameberry.com)",
+      "WebFetch(domain:www.familyeducation.com)",
+      "WebFetch(domain:www.today.com)",
+      "WebFetch(domain:www.thebump.com)",
+      "WebFetch(domain:www.names.org)",
+      "WebFetch(domain:www.pampers.com)",
+      "WebFetch(domain:www.happiestbaby.com)",
+      "WebFetch(domain:www.nancy.cc)",
+      "WebFetch(domain:www.usbirthcertificates.com)",
+      "WebFetch(domain:thegreenspringhome.com)",
+      "WebFetch(domain:www.rd.com)",
+      "WebFetch(domain:www.aarp.org)",
+      "WebFetch(domain:www.baby-chick.com)",
+      "WebFetch(domain:www.cbsnews.com)",
+      "WebFetch(domain:www.mother.ly)",
+      "Bash(node -e ' *)"
     ]
   }
 }

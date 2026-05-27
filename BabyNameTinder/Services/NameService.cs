@@ -11,8 +11,13 @@ public class NameService
     {
         var path = Path.Combine(env.ContentRootPath, "Data", "names.json");
         var json = File.ReadAllText(path);
-        _allNames = JsonSerializer.Deserialize<List<BabyName>>(json,
+        var raw = JsonSerializer.Deserialize<List<BabyName>>(json,
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+
+        // Deduplicate by name (case-insensitive), keeping first occurrence
+        _allNames = raw
+            .DistinctBy(n => n.Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
     }
 
     /// <summary>
@@ -23,12 +28,12 @@ public class NameService
     {
         var filtered = gender switch
         {
-            "boy" => _allNames.Where(n => n.Gender == "boy" || n.Gender == "neutral"),
+            "boy"  => _allNames.Where(n => n.Gender == "boy"  || n.Gender == "neutral"),
             "girl" => _allNames.Where(n => n.Gender == "girl" || n.Gender == "neutral"),
-            _ => _allNames.AsEnumerable()
+            _      => _allNames.AsEnumerable()
         };
 
-        // Deterministic shuffle by userId so each person has a unique order
+        // Deterministic shuffle per user so partners see different orderings
         var seed = userId.GetHashCode();
         var rng = new Random(seed);
         return filtered.Select(n => n.Name).OrderBy(_ => rng.Next()).ToList();

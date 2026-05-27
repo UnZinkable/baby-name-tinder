@@ -1,6 +1,7 @@
 /**
  * swipe.js — Baby Name Tinder
- * Fluid drag/fling swipe with color overlay, velocity detection, and smooth animations.
+ * Fluid drag/fling swipe with color overlay, velocity detection, smooth animations,
+ * and single-level undo.
  */
 (function () {
     'use strict';
@@ -13,8 +14,8 @@
     if (!allNamesEl) return;
 
     let names = JSON.parse(allNamesEl.value || '[]');
-    const lastName    = lastNameEl ? lastNameEl.value : '';
-    const nameRanks   = JSON.parse(document.getElementById('nameRanks')?.value    || '{}');
+    const lastName     = lastNameEl ? lastNameEl.value : '';
+    const nameRanks    = JSON.parse(document.getElementById('nameRanks')?.value    || '{}');
     const nameMeanings = JSON.parse(document.getElementById('nameMeanings')?.value || '{}');
 
     const emojis = ['🌸', '⭐', '🌟', '✨', '🌿', '🦋', '🌈', '🍀', '🌙', '💫', '🌺', '🎀', '🦄', '🌻', '🍁'];
@@ -43,8 +44,12 @@
     let topCard = null;
     let voting = false;
 
-    const SWIPE_THRESHOLD = 90;   // px to count as a deliberate swipe
-    const VELOCITY_THRESHOLD = 0.4; // px/ms — fast fling triggers swipe under distance threshold
+    // Undo state
+    let lastVote = null;          // { name, liked } of the most recent swipe
+    let wasShowingAllDone = false; // true when showAllDone() replaced the stack
+
+    const SWIPE_THRESHOLD   = 90;  // px
+    const VELOCITY_THRESHOLD = 0.4; // px/ms
 
     // ── Pointer events ─────────────────────────────────────────────────────────
     function getTopCard() { return container.querySelector('.name-card-top'); }
@@ -78,7 +83,6 @@
         const now = Date.now();
         const dt = now - lastMoveTime;
 
-        // Velocity (exponential smoothing)
         if (dt > 0) {
             const rawVel = (x - lastMoveX) / dt;
             velocityX = velocityX * 0.7 + rawVel * 0.3;
@@ -113,7 +117,6 @@
         const rotate = currentX * 0.07;
         topCard.style.transform = `translate(${currentX}px, ${currentY * 0.25}px) rotate(${rotate}deg)`;
 
-        // Colour overlay
         const progress = Math.min(Math.abs(currentX) / SWIPE_THRESHOLD, 1);
         const overlay = topCard.querySelector('.card-overlay');
         const likeEl  = topCard.querySelector('.like-indicator');
@@ -162,27 +165,27 @@
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight') triggerButtonVote(true);
         if (e.key === 'ArrowLeft')  triggerButtonVote(false);
+        if (e.key === 'z' || e.key === 'Z') triggerUndo();
     });
 
     // ── Buttons ────────────────────────────────────────────────────────────────
     const btnLike = document.getElementById('btnLike');
     const btnPass = document.getElementById('btnPass');
+    const btnUndo = document.getElementById('btnUndo');
     if (btnLike) btnLike.addEventListener('click', () => triggerButtonVote(true));
     if (btnPass) btnPass.addEventListener('click', () => triggerButtonVote(false));
+    if (btnUndo) btnUndo.addEventListener('click', () => triggerUndo());
 
-    /** Animate a button press: card leans then flies off */
     async function triggerButtonVote(liked) {
         if (voting || names.length === 0) return;
         const card = getTopCard();
         if (!card) return;
 
-        // Quick lean in the direction
         card.style.transition = 'transform 0.12s ease-out';
         card.style.transform = liked
             ? 'translateX(18px) rotate(4deg)'
             : 'translateX(-18px) rotate(-4deg)';
 
-        // Show indicator immediately
         const overlay = card.querySelector('.card-overlay');
         const likeEl  = card.querySelector('.like-indicator');
         const passEl  = card.querySelector('.pass-indicator');
@@ -203,22 +206,21 @@
         voting = true;
         const name = card.dataset.name;
 
-        // Strip the top-card class immediately so getTopCard() won't find this
-        // card during the 440ms it's still in the DOM flying off screen
+        // Save for undo before we modify state
+        lastVote = { name, liked };
+        hideUndoButton();
+
         card.classList.remove('name-card-top');
 
-        // Fly the card off screen
-        const flyX  = liked ? '130%' : '-130%';
+        const flyX   = liked ? '130%' : '-130%';
         const flyRot = liked ? '25deg' : '-25deg';
         card.style.transition = 'transform 0.42s cubic-bezier(0.55, 0, 1, 0.45), opacity 0.35s ease';
         card.style.transform  = `translateX(${flyX}) rotate(${flyRot})`;
         card.style.opacity    = '0';
 
-        // Remove from local list and promote the next card
         names.shift();
         if (names.length > 0) promoteCards(card);
 
-        // POST to server (fire & forget — don't block the animation)
         fetch('/Swipe/Vote', {
             method: 'POST',
             headers: {
@@ -228,25 +230,91 @@
             body: JSON.stringify({ name, liked })
         }).catch(err => console.error('Vote failed:', err));
 
-        // Clean up after animation
         await delay(440);
         card.remove();
-        updateProgress();
-        if (names.length === 0) showAllDone();
+        votedSoFar++;
+        renderProgress();
+
+        if (names.length === 0) {
+            showAllDone();
+        } else {
+            showUndoButton();
+        }
+        voting = false;
+    }
+
+    // ── Undo ───────────────────────────────────────────────────────────────────
+    async function triggerUndo() {
+        if (!lastVote || voting) return;
+
+        voting = true;
+        const { name, liked } = lastVote;
+        lastVote = null;
+        hideUndoButton();
+
+        // Tell server to remove the vote (fire & forget)
+        fetch('/Swipe/Undo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': getToken()
+            },
+            body: JSON.stringify({ name })
+        }).catch(err => console.error('Undo failed:', err));
+
+        // Restore name to front of queue
+        names.unshift(name);
+        votedSoFar = Math.max(0, votedSoFar - 1);
+
+        // If the all-done screen was showing, restore the card area and action buttons
+        if (wasShowingAllDone) {
+            wasShowingAllDone = false;
+            container.innerHTML = '';
+            document.getElementById('actionButtons')?.classList.remove('d-none');
+            document.getElementById('swipeHint')?.classList.remove('d-none');
+        }
+
+        // Remove any current DOM cards and rebuild the top-3 stack fresh
+        Array.from(container.querySelectorAll('.name-card')).forEach(c => c.remove());
+
+        const stackSize = Math.min(3, names.length);
+        // Append back→front so the last appended (index 0) is the DOM top-child = top card
+        for (let i = stackSize - 1; i >= 0; i--) {
+            const card = buildCard(names[i], i);
+            // Back cards get their stacked offset immediately (no transition yet)
+            if (i > 0) {
+                card.style.transition = 'none';
+                card.style.transform  = `translateY(${i * 9}px) scale(${1 - i * 0.04})`;
+            }
+            container.appendChild(card);
+        }
+
+        // Animate the returning top card sliding back in from off-screen
+        const returningCard = getTopCard();
+        if (returningCard) {
+            const startX   = liked ? '130%' : '-130%';
+            const startRot = liked ? '25deg' : '-25deg';
+            returningCard.style.transition = 'none';
+            returningCard.style.transform  = `translateX(${startX}) rotate(${startRot})`;
+            returningCard.style.opacity    = '0';
+            returningCard.getBoundingClientRect(); // force reflow
+            returningCard.style.transition = 'transform 0.42s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease';
+            returningCard.style.transform  = 'translate(0,0) rotate(0deg)';
+            returningCard.style.opacity    = '1';
+        }
+
+        renderProgress();
+        await delay(440);
         voting = false;
     }
 
     // ── Card management ────────────────────────────────────────────────────────
     function promoteCards(flyingCard) {
-        // Exclude the flying card — it's still in the DOM during the exit animation
-        // but must not be treated as part of the active stack
         const remaining = Array.from(container.querySelectorAll('.name-card'))
             .filter(c => c !== flyingCard);
 
         if (remaining.length === 0) return;
 
-        // DOM order: [back ... middle] — the LAST element has the highest z-index
-        // and is visually on top. Promote it to be the new interactive card.
         remaining.forEach((c, i) => {
             const stepsFromTop = remaining.length - 1 - i;
             c.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
@@ -262,12 +330,11 @@
             }
         });
 
-        // Insert a new back card if there are more names queued up
         if (names.length >= 3) {
-            const stepsFromTop = remaining.length; // furthest from top
+            const stepsFromTop = remaining.length;
             const newCard = buildCard(names[2], stepsFromTop);
-            newCard.style.zIndex = String(10 - stepsFromTop);
-            newCard.style.transform = `translateY(${stepsFromTop * 9}px) scale(${1 - stepsFromTop * 0.04})`;
+            newCard.style.zIndex     = String(10 - stepsFromTop);
+            newCard.style.transform  = `translateY(${stepsFromTop * 9}px) scale(${1 - stepsFromTop * 0.04})`;
             container.insertBefore(newCard, container.firstChild);
         }
     }
@@ -276,8 +343,8 @@
         const div = document.createElement('div');
         div.className = 'name-card' + (stackIndex === 0 ? ' name-card-top' : '');
         div.dataset.name = name;
-        div.style.zIndex  = 10 - stackIndex;
-        div.style.cursor  = stackIndex === 0 ? 'grab' : 'default';
+        div.style.zIndex = 10 - stackIndex;
+        div.style.cursor = stackIndex === 0 ? 'grab' : 'default';
 
         const pop     = getPopularity(name);
         const meaning = nameMeanings[name] || '';
@@ -297,11 +364,10 @@
     }
 
     // ── Progress ───────────────────────────────────────────────────────────────
-    let votedSoFar = parseInt(document.getElementById('votedCount')?.value  ?? '0') || 0;
+    let votedSoFar = parseInt(document.getElementById('votedCount')?.value ?? '0') || 0;
     const totalNames = parseInt(document.getElementById('totalCount')?.value ?? '0') || 0;
 
-    function updateProgress() {
-        votedSoFar++;
+    function renderProgress() {
         const bar    = document.getElementById('progressBar');
         const label1 = document.getElementById('progressLabel');
         const label2 = document.getElementById('remainingLabel');
@@ -311,7 +377,9 @@
         if (label2) label2.textContent = `${names.length} remaining`;
     }
 
+    // ── All done ───────────────────────────────────────────────────────────────
     function showAllDone() {
+        wasShowingAllDone = true;
         container.innerHTML = `
             <div class="empty-state text-center py-5">
                 <div style="font-size:4rem">🎉</div>
@@ -321,8 +389,24 @@
                     <i class="bi bi-heart-fill"></i> View Matches
                 </a>
             </div>`;
-        document.querySelector('.action-buttons')?.remove();
-        document.querySelector('.swipe-hint')?.remove();
+        // Hide (not remove) so undo can restore them
+        document.getElementById('actionButtons')?.classList.add('d-none');
+        document.getElementById('swipeHint')?.classList.add('d-none');
+        // Still show undo so the user can take back the last swipe
+        showUndoButton();
+    }
+
+    // ── Undo button visibility ─────────────────────────────────────────────────
+    function showUndoButton() {
+        const row = document.getElementById('undoRow');
+        if (!row) return;
+        row.classList.remove('d-none');
+        row.classList.add('undo-pop');
+        setTimeout(() => row.classList.remove('undo-pop'), 400);
+    }
+
+    function hideUndoButton() {
+        document.getElementById('undoRow')?.classList.add('d-none');
     }
 
     // ── Helpers ────────────────────────────────────────────────────────────────
@@ -339,7 +423,7 @@
     }
 
     // Match event from SignalR (layout.cshtml)
-    document.addEventListener('nameMatch', (e) => {
+    document.addEventListener('nameMatch', () => {
         if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
     });
 

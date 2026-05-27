@@ -90,7 +90,7 @@
 
         @if (remaining > 0)
         {
-            <div class="action-buttons d-flex justify-content-center gap-4 mt-4">
+            <div class="action-buttons d-flex justify-content-center gap-4 mt-4" id="actionButtons">
                 <button class="action-btn action-btn-pass" id="btnPass" title="Pass (←)">
                     <i class="bi bi-x-lg"></i>
                 </button>
@@ -98,10 +98,17 @@
                     <i class="bi bi-heart-fill"></i>
                 </button>
             </div>
-            <p class="text-center text-muted small mt-2 swipe-hint">
+            <p class="text-center text-muted small mt-2" id="swipeHint">
                 ← pass &nbsp;|&nbsp; like →
             </p>
         }
+
+        @* Undo row — always in DOM; JS shows/hides it after each swipe *@
+        <div id="undoRow" class="text-center mt-1 d-none">
+            <button id="btnUndo" class="btn-undo" title="Undo last swipe (Z)">
+                <i class="bi bi-arrow-counterclockwise"></i> Undo
+            </button>
+        </div>
     </div>
 </div>
 

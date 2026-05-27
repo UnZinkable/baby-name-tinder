@@ -39,7 +39,8 @@
       "Bash(git add *)",
       "Bash(git commit -m 'Add name meanings to swipe cards *)",
       "Bash(git push *)",
-      "Bash(git commit -m 'Add My Votes page and reset votes feature *)"
+      "Bash(git commit -m 'Add My Votes page and reset votes feature *)",
+      "Bash(git commit -m 'Add undo last swipe *)"
     ]
   }
 }

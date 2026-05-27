@@ -69,6 +69,27 @@ public class VoteService
     }
 
     /// <summary>
+    /// Removes a single vote and, if it was a like, scrubs the resulting match.
+    /// </summary>
+    public async Task UndoVoteAsync(Partnership partnership, string userId, string name)
+    {
+        var myVotes = await GetVotesAsync(partnership.Id, userId);
+        if (!myVotes.Votes.TryGetValue(name, out var wasLiked)) return;
+
+        myVotes.Votes.Remove(name);
+        await _blobs.SetAsync(VotesContainer, VoteKey(partnership.Id, userId), myVotes);
+
+        if (wasLiked)
+        {
+            var matches = await GetMatchListAsync(partnership.Id);
+            var countBefore = matches.Names.Count;
+            matches.Names.RemoveAll(n => n.Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (matches.Names.Count != countBefore)
+                await _blobs.SetAsync(MatchesContainer, $"{partnership.Id}.json", matches);
+        }
+    }
+
+    /// <summary>
     /// Clears all of this user's votes and removes any matches they contributed to.
     /// </summary>
     public async Task ResetVotesAsync(Partnership partnership, string userId)

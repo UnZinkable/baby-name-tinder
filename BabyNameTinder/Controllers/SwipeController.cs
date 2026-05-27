@@ -91,5 +91,21 @@ public class SwipeController : Controller
         return Json(new { success = true, isMatch });
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Undo([FromBody] UndoRequest request)
+    {
+        var user = await _users.GetByUsernameAsync(Username);
+        if (user?.PartnershipId == null)
+            return Json(new { success = false });
+
+        var partnership = await _partnerships.GetAsync(user.PartnershipId);
+        if (partnership == null)
+            return Json(new { success = false });
+
+        await _votes.UndoVoteAsync(partnership, UserId, request.Name);
+        return Json(new { success = true });
+    }
+
     public record VoteRequest(string Name, bool Liked);
+    public record UndoRequest(string Name);
 }

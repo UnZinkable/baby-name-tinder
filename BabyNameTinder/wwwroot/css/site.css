@@ -316,6 +316,34 @@ body {
 /* ===== Progress bar ===== */
 .progress-bar { transition: width 0.5s ease; }
 
+/* ===== Undo button ===== */
+.btn-undo {
+    background: none;
+    border: 1.5px solid #bbb;
+    color: #666;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 5px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.15s;
+    letter-spacing: 0.03em;
+}
+.btn-undo:hover {
+    background: #f5f5f5;
+    border-color: #888;
+    color: #333;
+}
+.btn-undo:active { transform: scale(0.93); }
+
+/* Pop-in animation when undo button appears */
+@keyframes undoPop {
+    0%   { opacity: 0; transform: scale(0.7) translateY(6px); }
+    70%  { transform: scale(1.08) translateY(-2px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.undo-pop { animation: undoPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
 /* ===== Votes History Page ===== */
 .vote-row {
     border: 1px solid rgba(0,0,0,0.06);

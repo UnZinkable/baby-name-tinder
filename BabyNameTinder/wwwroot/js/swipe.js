@@ -13,13 +13,23 @@
     if (!allNamesEl) return;
 
     let names = JSON.parse(allNamesEl.value || '[]');
-    const lastName = lastNameEl ? lastNameEl.value : '';
+    const lastName  = lastNameEl ? lastNameEl.value : '';
+    const nameRanks = JSON.parse(document.getElementById('nameRanks')?.value || '{}');
 
     const emojis = ['🌸', '⭐', '🌟', '✨', '🌿', '🦋', '🌈', '🍀', '🌙', '💫', '🌺', '🎀', '🦄', '🌻', '🍁'];
     function getEmoji(name) {
         let h = 0;
         for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
         return emojis[Math.abs(h) % emojis.length];
+    }
+
+    function getPopularity(name) {
+        const rank = nameRanks[name] ?? 999;
+        if (rank <= 10)  return { label: '🔥 Top 10',      cls: 'pop-hot'     };
+        if (rank <= 25)  return { label: '⭐ Top 25',      cls: 'pop-top'     };
+        if (rank <= 75)  return { label: '💜 Popular',     cls: 'pop-popular' };
+        if (rank <= 150) return { label: '🌿 Less Common', cls: 'pop-less'    };
+        return                  { label: '✨ Rare',        cls: 'pop-rare'    };
     }
 
     // ── State ──────────────────────────────────────────────────────────────────
@@ -254,12 +264,14 @@
         div.style.zIndex  = 10 - stackIndex;
         div.style.cursor  = stackIndex === 0 ? 'grab' : 'default';
 
+        const pop = getPopularity(name);
         div.innerHTML = `
             <div class="card-overlay"></div>
             <div class="name-card-inner">
                 <div class="name-card-emoji">${getEmoji(name)}</div>
                 <h2 class="name-card-fullname">${esc(name)} ${esc(lastName)}</h2>
                 <p class="name-card-firstname text-muted">${esc(name)}</p>
+                <span class="popularity-badge ${pop.cls}">${pop.label}</span>
             </div>
             <div class="like-indicator">❤️ LIKE</div>
             <div class="pass-indicator">✕ NOPE</div>
@@ -268,21 +280,14 @@
     }
 
     // ── Progress ───────────────────────────────────────────────────────────────
-    let votedSoFar = (() => {
-        const el = document.querySelector('.d-flex.justify-content-between span:first-child');
-        return parseInt(el?.textContent ?? '0') || 0;
-    })();
-    const totalNames = (() => {
-        const el = document.querySelector('.d-flex.justify-content-between span:first-child');
-        const txt = el?.textContent ?? '';
-        return parseInt(txt.split('of')[1]) || 0;
-    })();
+    let votedSoFar = parseInt(document.getElementById('votedCount')?.value  ?? '0') || 0;
+    const totalNames = parseInt(document.getElementById('totalCount')?.value ?? '0') || 0;
 
     function updateProgress() {
         votedSoFar++;
-        const bar    = document.querySelector('.progress-bar');
-        const label1 = document.querySelector('.d-flex.justify-content-between span:first-child');
-        const label2 = document.querySelector('.d-flex.justify-content-between span:last-child');
+        const bar    = document.getElementById('progressBar');
+        const label1 = document.getElementById('progressLabel');
+        const label2 = document.getElementById('remainingLabel');
         if (bar && totalNames > 0)
             bar.style.width = `${Math.round(votedSoFar / totalNames * 100)}%`;
         if (label1) label1.textContent = `${votedSoFar} of ${totalNames} names reviewed`;

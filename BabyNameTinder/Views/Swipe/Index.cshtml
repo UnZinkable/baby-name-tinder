@@ -1,11 +1,13 @@
 @model List<string>
 @{
     ViewData["Title"] = "Swipe Names";
-    var lastName = ViewBag.LastName as string ?? "";
-    var isLinked = (bool)(ViewBag.IsLinked ?? false);
-    var totalCount = (int)(ViewBag.TotalCount ?? 0);
-    var votedCount = (int)(ViewBag.VotedCount ?? 0);
-    var remaining = Model.Count;
+    var lastName         = ViewBag.LastName as string ?? "";
+    var isLinked         = (bool)(ViewBag.IsLinked ?? false);
+    var totalCount       = (int)(ViewBag.TotalCount ?? 0);
+    var votedCount       = (int)(ViewBag.VotedCount ?? 0);
+    var prioritizedCount = (int)(ViewBag.PrioritizedCount ?? 0);
+    var ranks            = ViewBag.Ranks as Dictionary<string, int> ?? new();
+    var remaining        = Model.Count;
 }
 
 <div class="swipe-page">
@@ -13,22 +15,29 @@
 
         @if (!isLinked)
         {
-            <div class="alert alert-info text-center rounded-4 mb-4">
+            <div class="alert alert-info text-center rounded-4 mb-3 py-2">
                 <i class="bi bi-info-circle"></i>
-                Your partner hasn't joined yet. Share your invite code from the
+                Partner hasn't joined yet. Share your invite code from the
                 <a asp-controller="Partner" asp-action="Dashboard" class="fw-semibold">Partner Dashboard</a>.
-                You can still swipe — your likes will be saved!
+                Your likes will be saved!
+            </div>
+        }
+        else if (prioritizedCount > 0)
+        {
+            <div class="alert alert-pink text-center rounded-4 mb-3 py-2 small">
+                💕 Smart ordering on — names your partner already likes are up first!
             </div>
         }
 
         <!-- Progress bar -->
         <div class="mb-3">
             <div class="d-flex justify-content-between small text-muted mb-1">
-                <span>@votedCount of @totalCount names reviewed</span>
-                <span>@remaining remaining</span>
+                <span id="progressLabel">@votedCount of @totalCount names reviewed</span>
+                <span id="remainingLabel">@remaining remaining</span>
             </div>
             <div class="progress" style="height: 6px; border-radius: 10px;">
-                <div class="progress-bar bg-primary" style="width: @(totalCount > 0 ? (votedCount * 100 / totalCount) : 0)%"></div>
+                <div class="progress-bar" id="progressBar"
+                     style="width: @(totalCount > 0 ? (votedCount * 100 / totalCount) : 0)%"></div>
             </div>
         </div>
 
@@ -50,17 +59,20 @@
                 @* Render top 3 cards (only top is interactive) *@
                 @for (int i = Math.Min(2, remaining - 1); i >= 0; i--)
                 {
-                    var name = Model[i];
+                    var name     = Model[i];
                     var fullName = $"{name} {lastName}";
+                    var rank     = ranks.TryGetValue(name, out var r) ? r : 999;
+                    var (popLabel, popClass) = GetPopularity(rank);
+
                     <div class="name-card @(i == 0 ? "name-card-top" : "")"
                          data-name="@name"
-                         style="z-index: @(10 - i); cursor: @(i == 0 ? "grab" : "default");"
-                         >
+                         style="z-index: @(10 - i); cursor: @(i == 0 ? "grab" : "default");">
                         <div class="card-overlay"></div>
                         <div class="name-card-inner">
                             <div class="name-card-emoji">@GetEmoji(name)</div>
                             <h2 class="name-card-fullname">@fullName</h2>
                             <p class="name-card-firstname text-muted">@name</p>
+                            <span class="popularity-badge @popClass">@popLabel</span>
                         </div>
                         <div class="like-indicator">❤️ LIKE</div>
                         <div class="pass-indicator">✕ NOPE</div>
@@ -71,7 +83,6 @@
 
         @if (remaining > 0)
         {
-            <!-- Action buttons -->
             <div class="action-buttons d-flex justify-content-center gap-4 mt-4">
                 <button class="action-btn action-btn-pass" id="btnPass" title="Pass (←)">
                     <i class="bi bi-x-lg"></i>
@@ -87,9 +98,12 @@
     </div>
 </div>
 
-<!-- Hidden data for JS -->
+<!-- Data for JS -->
 <input type="hidden" id="remainingNames" value="@System.Text.Json.JsonSerializer.Serialize(Model)" />
-<input type="hidden" id="lastName" value="@lastName" />
+<input type="hidden" id="lastName"       value="@lastName" />
+<input type="hidden" id="nameRanks"      value="@ViewBag.RanksJson" />
+<input type="hidden" id="totalCount"     value="@totalCount" />
+<input type="hidden" id="votedCount"     value="@votedCount" />
 @Html.AntiForgeryToken()
 
 @section Scripts {
@@ -99,8 +113,16 @@
 @functions {
     static string GetEmoji(string name)
     {
-        // Deterministic emoji based on name's first char
         var emojis = new[] { "🌸", "⭐", "🌟", "✨", "🌿", "🦋", "🌈", "🍀", "🌙", "💫", "🌺", "🎀", "🦄", "🌻", "🍁" };
         return emojis[Math.Abs(name.GetHashCode()) % emojis.Length];
     }
+
+    static (string label, string cssClass) GetPopularity(int rank) => rank switch
+    {
+        <= 10  => ("🔥 Top 10",      "pop-hot"),
+        <= 25  => ("⭐ Top 25",      "pop-top"),
+        <= 75  => ("💜 Popular",     "pop-popular"),
+        <= 150 => ("🌿 Less Common", "pop-less"),
+        _      => ("✨ Rare",        "pop-rare")
+    };
 }

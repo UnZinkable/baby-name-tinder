@@ -21,22 +21,13 @@ public class NameService
     }
 
     /// <summary>
-    /// Returns names filtered by gender, shuffled deterministically by userId so
-    /// both partners see a different order.
+    /// Returns names filtered by gender, shuffled deterministically by userId.
     /// </summary>
     public List<string> GetNames(string gender, string userId)
     {
-        var filtered = gender switch
-        {
-            "boy"  => _allNames.Where(n => n.Gender == "boy"  || n.Gender == "neutral"),
-            "girl" => _allNames.Where(n => n.Gender == "girl" || n.Gender == "neutral"),
-            _      => _allNames.AsEnumerable()
-        };
-
-        // Deterministic shuffle per user so partners see different orderings
         var seed = userId.GetHashCode();
         var rng = new Random(seed);
-        return filtered.Select(n => n.Name).OrderBy(_ => rng.Next()).ToList();
+        return Filter(gender).Select(n => n.Name).OrderBy(_ => rng.Next()).ToList();
     }
 
     /// <summary>
@@ -48,4 +39,22 @@ public class NameService
             .Where(n => !votedNames.Contains(n))
             .ToList();
     }
+
+    /// <summary>
+    /// Returns a rank (1 = most popular) for each name within the filtered gender set.
+    /// Based on the order names appear in names.json (SSA-sourced order).
+    /// </summary>
+    public Dictionary<string, int> GetRanks(string gender)
+    {
+        return Filter(gender)
+            .Select((n, i) => (n.Name, Rank: i + 1))
+            .ToDictionary(x => x.Name, x => x.Rank, StringComparer.OrdinalIgnoreCase);
+    }
+
+    private IEnumerable<BabyName> Filter(string gender) => gender switch
+    {
+        "boy"  => _allNames.Where(n => n.Gender == "boy"  || n.Gender == "neutral"),
+        "girl" => _allNames.Where(n => n.Gender == "girl" || n.Gender == "neutral"),
+        _      => _allNames.AsEnumerable()
+    };
 }

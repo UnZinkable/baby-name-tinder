@@ -2,6 +2,7 @@ using BabyNameTinder.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace BabyNameTinder.Controllers;
 
@@ -37,15 +38,36 @@ public class SwipeController : Controller
             return RedirectToAction("Create", "Partner");
 
         var myVotes = await _votes.GetVotesAsync(partnership.Id, UserId);
-        var votedSet = new HashSet<string>(myVotes.Votes.Keys);
-        var unvoted = _names.GetUnvotedNames(partnership.Gender, UserId, votedSet);
+        var votedSet = new HashSet<string>(myVotes.Votes.Keys, StringComparer.OrdinalIgnoreCase);
+        var unvoted  = _names.GetUnvotedNames(partnership.Gender, UserId, votedSet);
 
-        ViewBag.LastName = partnership.LastName;
-        ViewBag.PartnershipId = partnership.Id;
-        ViewBag.UserId = UserId;
-        ViewBag.TotalCount = _names.GetNames(partnership.Gender, UserId).Count;
-        ViewBag.VotedCount = votedSet.Count;
-        ViewBag.IsLinked = partnership.IsComplete;
+        // ── Partner-liked names first ──────────────────────────────────────────
+        // Load partner's votes and bubble up names they liked so matches
+        // are discovered as early as possible.
+        var partnerLiked = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if (partnership.IsComplete)
+        {
+            var partnerId    = partnership.GetPartnerId(UserId)!;
+            var partnerVotes = await _votes.GetVotesAsync(partnership.Id, partnerId);
+            foreach (var kv in partnerVotes.Votes)
+                if (kv.Value) partnerLiked.Add(kv.Key);
+        }
+
+        // Partition: names partner already liked → front; everything else → back
+        var prioritized = unvoted.Where(n =>  partnerLiked.Contains(n)).ToList();
+        var rest        = unvoted.Where(n => !partnerLiked.Contains(n)).ToList();
+        unvoted = prioritized.Concat(rest).ToList();
+
+        // ── Popularity ranks ───────────────────────────────────────────────────
+        var ranks = _names.GetRanks(partnership.Gender);
+
+        ViewBag.LastName          = partnership.LastName;
+        ViewBag.TotalCount        = _names.GetNames(partnership.Gender, UserId).Count;
+        ViewBag.VotedCount        = votedSet.Count;
+        ViewBag.IsLinked          = partnership.IsComplete;
+        ViewBag.PrioritizedCount  = prioritized.Count;   // used to show the smart-sort hint
+        ViewBag.Ranks             = ranks;
+        ViewBag.RanksJson         = JsonSerializer.Serialize(ranks);
 
         return View(unvoted);
     }

@@ -1,0 +1,21 @@
+# Build output
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# Publish output
+publish/
+
+# Secrets (never commit real connection strings)
+appsettings.Production.json
+
+# macOS
+.DS_Store
+
+# Rider / JetBrains
+.idea/
+
+# VS Code
+.vscode/

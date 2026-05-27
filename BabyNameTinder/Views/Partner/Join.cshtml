@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "Join Your Partner";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="auth-card p-4 rounded-4 shadow-sm">
+                <div class="text-center mb-4">
+                    <div style="font-size: 2.5rem;">🔗</div>
+                    <h2 class="fw-bold mt-2">Join Your Partner</h2>
+                    <p class="text-muted">Enter the invite code your partner shared with you.</p>
+                </div>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger rounded-3">@ViewBag.Error</div>
+                }
+
+                <form asp-action="Join" asp-controller="Partner" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Invite Code</label>
+                        <input type="text" name="code" class="form-control form-control-lg text-center fw-bold"
+                               placeholder="ABC123" maxlength="6" required autofocus
+                               style="letter-spacing: 0.3em; font-size: 1.5rem;" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold">
+                        Link Accounts 💕
+                    </button>
+                </form>
+
+                <hr class="my-3" />
+                <p class="text-center text-muted small mb-0">
+                    Don't have a code?
+                    <a asp-action="Create" asp-controller="Partner" class="fw-semibold">Create a new name hunt</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

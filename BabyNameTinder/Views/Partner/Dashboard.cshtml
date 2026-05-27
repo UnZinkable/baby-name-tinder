@@ -1,0 +1,124 @@
+@using BabyNameTinder.Models
+@model Partnership
+@{
+    ViewData["Title"] = "Partner Dashboard";
+    var inviteCode = TempData["InviteCode"] as string;
+    var genderLabel = Model.Gender switch {
+        "boy" => "👦 Boy",
+        "girl" => "👧 Girl",
+        _ => "🎁 Surprise"
+    };
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+
+            @if (inviteCode != null)
+            {
+                <div class="alert alert-success rounded-4 p-4 mb-4 shadow-sm">
+                    <h5 class="fw-bold mb-2">🎉 Your name hunt is ready!</h5>
+                    <p class="mb-3">Share this code with your partner so they can join:</p>
+                    <div class="text-center">
+                        <span class="invite-code-display" id="inviteCodeDisplay">@inviteCode</span>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button class="btn btn-outline-success btn-sm" onclick="copyCode('@inviteCode')">
+                            <i class="bi bi-clipboard"></i> Copy Code
+                        </button>
+                    </div>
+                </div>
+            }
+
+            <div class="auth-card p-4 rounded-4 shadow-sm mb-4">
+                <h4 class="fw-bold mb-4"><i class="bi bi-people-fill text-primary"></i> Your Name Hunt</h4>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <div class="info-box p-3 rounded-3 text-center">
+                            <div class="text-muted small mb-1">Baby's Last Name</div>
+                            <div class="fw-bold fs-5">@Model.LastName</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="info-box p-3 rounded-3 text-center">
+                            <div class="text-muted small mb-1">Gender</div>
+                            <div class="fw-bold fs-5">@genderLabel</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="partner-status p-3 rounded-3 mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="partner-avatar">@Model.User1Username[0].ToString().ToUpper()</div>
+                        <div>
+                            <div class="fw-semibold">@Model.User1Username</div>
+                            <div class="text-muted small">Creator</div>
+                        </div>
+                    </div>
+                    <div class="text-center my-2 text-muted">
+                        @if (Model.IsComplete)
+                        {
+                            <i class="bi bi-heart-fill text-danger"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-three-dots"></i>
+                        }
+                    </div>
+                    @if (Model.IsComplete)
+                    {
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="partner-avatar partner-avatar-2">@Model.User2Username![0].ToString().ToUpper()</div>
+                            <div>
+                                <div class="fw-semibold">@Model.User2Username</div>
+                                <div class="text-muted small">Partner</div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex align-items-center gap-3 text-muted">
+                            <div class="partner-avatar-empty">?</div>
+                            <div>
+                                <div class="fw-semibold">Waiting for partner...</div>
+                                <div class="small">Share the invite code above</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                @if (!Model.IsComplete && inviteCode == null)
+                {
+                    <div class="mb-4">
+                        <p class="text-muted small mb-2">Your invite code:</p>
+                        <div class="text-center">
+                            <span class="invite-code-display" id="inviteCodeDisplay">@Model.InviteCode</span>
+                        </div>
+                        <div class="text-center mt-2">
+                            <button class="btn btn-outline-secondary btn-sm" onclick="copyCode('@Model.InviteCode')">
+                                <i class="bi bi-clipboard"></i> Copy Code
+                            </button>
+                        </div>
+                    </div>
+                }
+
+                <a asp-controller="Swipe" asp-action="Index" class="btn btn-primary btn-lg w-100 fw-bold">
+                    Start Swiping 👆
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function copyCode(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = event.target.closest('button');
+                btn.innerHTML = '<i class="bi bi-check2"></i> Copied!';
+                setTimeout(() => btn.innerHTML = '<i class="bi bi-clipboard"></i> Copy Code', 2000);
+            });
+        }
+    </script>
+}

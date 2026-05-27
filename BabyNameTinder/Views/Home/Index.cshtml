@@ -1,0 +1,55 @@
+@{
+    ViewData["Title"] = "Find Your Baby's Perfect Name";
+    Layout = "_Layout";
+}
+
+<div class="hero-section text-center py-5">
+    <div class="container py-4">
+        <div class="hero-emoji mb-3" style="font-size: 4rem;">💕</div>
+        <h1 class="display-4 fw-bold text-white mb-3">Find Your Baby's Perfect Name</h1>
+        <p class="lead text-white-75 mb-4" style="max-width: 600px; margin: 0 auto;">
+            Swipe through hundreds of beautiful baby names with your partner.
+            When you both love a name — it's a match!
+        </p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg px-5 fw-bold">
+                Get Started Free
+            </a>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light btn-lg px-5">
+                Log In
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4 text-center">
+        <div class="col-md-4">
+            <div class="feature-card p-4 rounded-4 h-100">
+                <div class="feature-icon mb-3">👆</div>
+                <h4 class="fw-bold">Swipe Names</h4>
+                <p class="text-muted">Browse through hundreds of names. Swipe right to like, left to pass — it's that simple.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card p-4 rounded-4 h-100">
+                <div class="feature-icon mb-3">🔗</div>
+                <h4 class="fw-bold">Link with Your Partner</h4>
+                <p class="text-muted">Create a shared space with your partner. Set your baby's last name and whether it's a boy, girl, or surprise!</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card p-4 rounded-4 h-100">
+                <div class="feature-icon mb-3">💕</div>
+                <h4 class="fw-bold">Celebrate Matches</h4>
+                <p class="text-muted">When you both love a name, you'll get a real-time notification and it's added to your matches list.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg px-5 fw-bold">
+            Start Swiping →
+        </a>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\kuram\\\\Desktop\\\\Pokemon Site\" -Recurse -Force)",
+      "Bash(Select-Object FullName, PSIsContainer)",
+      "Bash(ConvertTo-Json)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\kuram\\\\Desktop\\\\Baby Name Tinder\" -Force -Recurse)",
+      "Bash(Sort-Object FullName)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\kuram\\\\Desktop\\\\Baby Name Tinder\" -Force -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName })",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\kuram\\\\Desktop\\\\Baby Name Tinder\" -Force | ForEach-Object { \"[$\\(if \\($_.PSIsContainer\\) {'DIR'} else {'FILE'}\\)] $\\($_.Name\\)\" })",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\kuram\\\\Desktop\\\\Baby Name Tinder\\\\.claude\" -Force -Recurse | ForEach-Object { $_.FullName })",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\kuram\\\\Desktop\\\\Pokemon Site\" -Recurse -Depth 2)",
+      "Bash(Select-Object FullName)",
+      "Bash(Get-ChildItem *)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\kuram\\\\Desktop\\\\Baby Name Tinder\" | Where-Object { $_.Name -ne '.git' -and $_.Name -ne '.claude' })",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\kuram\\\\Desktop\\\\Pokemon Site\\\\PokemonTracker\\\\Views\" -Recurse | Where-Object { $_.Extension -eq \".cshtml\" } | Select-Object FullName)",
+      "PowerShell(head *)"
+    ]
+  }
+}

@@ -1,0 +1,105 @@
+@model List<string>
+@{
+    ViewData["Title"] = "Swipe Names";
+    var lastName = ViewBag.LastName as string ?? "";
+    var isLinked = (bool)(ViewBag.IsLinked ?? false);
+    var totalCount = (int)(ViewBag.TotalCount ?? 0);
+    var votedCount = (int)(ViewBag.VotedCount ?? 0);
+    var remaining = Model.Count;
+}
+
+<div class="swipe-page">
+    <div class="container py-3">
+
+        @if (!isLinked)
+        {
+            <div class="alert alert-info text-center rounded-4 mb-4">
+                <i class="bi bi-info-circle"></i>
+                Your partner hasn't joined yet. Share your invite code from the
+                <a asp-controller="Partner" asp-action="Dashboard" class="fw-semibold">Partner Dashboard</a>.
+                You can still swipe — your likes will be saved!
+            </div>
+        }
+
+        <!-- Progress bar -->
+        <div class="mb-3">
+            <div class="d-flex justify-content-between small text-muted mb-1">
+                <span>@votedCount of @totalCount names reviewed</span>
+                <span>@remaining remaining</span>
+            </div>
+            <div class="progress" style="height: 6px; border-radius: 10px;">
+                <div class="progress-bar bg-primary" style="width: @(totalCount > 0 ? (votedCount * 100 / totalCount) : 0)%"></div>
+            </div>
+        </div>
+
+        <!-- Card Stack -->
+        <div class="card-stack-container" id="cardContainer">
+            @if (remaining == 0)
+            {
+                <div class="empty-state text-center py-5">
+                    <div style="font-size: 4rem;">🎉</div>
+                    <h3 class="fw-bold mt-3">You've seen them all!</h3>
+                    <p class="text-muted">Check your matches to see what you and your partner both love.</p>
+                    <a asp-controller="Match" asp-action="Index" class="btn btn-primary btn-lg mt-2">
+                        <i class="bi bi-heart-fill"></i> View Matches
+                    </a>
+                </div>
+            }
+            else
+            {
+                @* Render top 3 cards (only top is interactive) *@
+                @for (int i = Math.Min(2, remaining - 1); i >= 0; i--)
+                {
+                    var name = Model[i];
+                    var fullName = $"{name} {lastName}";
+                    <div class="name-card @(i == 0 ? "name-card-top" : "")"
+                         data-name="@name"
+                         data-index="@i"
+                         style="z-index: @(10 - i); --card-offset: @(i * 8)px;">
+                        <div class="name-card-inner">
+                            <div class="name-card-emoji">@GetEmoji(name)</div>
+                            <h2 class="name-card-fullname">@fullName</h2>
+                            <p class="name-card-firstname text-muted">@name</p>
+                        </div>
+                        <div class="like-indicator text-success" style="opacity:0">❤️ Like</div>
+                        <div class="pass-indicator text-danger" style="opacity:0">✕ Pass</div>
+                    </div>
+                }
+            }
+        </div>
+
+        @if (remaining > 0)
+        {
+            <!-- Action buttons -->
+            <div class="action-buttons d-flex justify-content-center gap-4 mt-4">
+                <button class="action-btn action-btn-pass" id="btnPass" title="Pass (←)">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+                <button class="action-btn action-btn-like" id="btnLike" title="Like (→)">
+                    <i class="bi bi-heart-fill"></i>
+                </button>
+            </div>
+            <p class="text-center text-muted small mt-2">
+                ← pass &nbsp;|&nbsp; like →
+            </p>
+        }
+    </div>
+</div>
+
+<!-- Hidden data for JS -->
+<input type="hidden" id="remainingNames" value="@System.Text.Json.JsonSerializer.Serialize(Model)" />
+<input type="hidden" id="lastName" value="@lastName" />
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    <script src="~/js/swipe.js" asp-append-version="true"></script>
+}
+
+@functions {
+    static string GetEmoji(string name)
+    {
+        // Deterministic emoji based on name's first char
+        var emojis = new[] { "🌸", "⭐", "🌟", "✨", "🌿", "🦋", "🌈", "🍀", "🌙", "💫", "🌺", "🎀", "🦄", "🌻", "🍁" };
+        return emojis[Math.Abs(name.GetHashCode()) % emojis.Length];
+    }
+}

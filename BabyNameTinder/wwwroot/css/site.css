@@ -1,0 +1,289 @@
+/* ===== Global ===== */
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background: #fdf0f4;
+    min-height: 100vh;
+}
+
+/* ===== Navbar ===== */
+.app-navbar {
+    background: linear-gradient(135deg, #ff6b9d, #ff4757) !important;
+    box-shadow: 0 2px 12px rgba(255,71,87,0.3);
+}
+
+/* ===== Hero Section ===== */
+.hero-section {
+    background: linear-gradient(135deg, #ff6b9d 0%, #ff4757 50%, #c44569 100%);
+    min-height: 420px;
+    display: flex;
+    align-items: center;
+}
+
+.hero-emoji { animation: pulse 2s infinite; }
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+
+/* ===== Feature cards ===== */
+.feature-card {
+    background: white;
+    border: 1px solid #ffe0eb;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(255,107,157,0.18);
+}
+.feature-icon { font-size: 2.5rem; }
+
+/* ===== Auth / info cards ===== */
+.auth-card {
+    background: white;
+    border: 1px solid #ffe0eb;
+}
+
+.info-box {
+    background: #fff5f8;
+    border: 1px solid #ffd6e7;
+}
+
+/* ===== Buttons ===== */
+.btn-primary {
+    background: linear-gradient(135deg, #ff6b9d, #ff4757);
+    border: none;
+    color: white;
+}
+.btn-primary:hover, .btn-primary:focus {
+    background: linear-gradient(135deg, #e55f8e, #e03e4b);
+    border: none;
+    color: white;
+}
+.btn-outline-pink {
+    border-color: #ff6b9d;
+    color: #ff6b9d;
+}
+.btn-outline-pink:hover, .btn-check:checked + .btn-outline-pink {
+    background: #ff6b9d;
+    color: white;
+    border-color: #ff6b9d;
+}
+.btn-outline-blue {
+    border-color: #4facfe;
+    color: #4facfe;
+}
+.btn-outline-blue:hover, .btn-check:checked + .btn-outline-blue {
+    background: #4facfe;
+    color: white;
+    border-color: #4facfe;
+}
+
+/* ===== Partner Dashboard ===== */
+.partner-status {
+    background: #fff5f8;
+    border: 1px solid #ffd6e7;
+}
+.partner-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff6b9d, #ff4757);
+    color: white;
+    font-weight: 800;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.partner-avatar-2 {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+.partner-avatar-empty {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px dashed #ccc;
+    color: #ccc;
+    font-weight: 800;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.invite-code-display {
+    font-size: 2.5rem;
+    font-weight: 900;
+    letter-spacing: 0.25em;
+    color: #198754;
+    background: #f0faf5;
+    padding: 0.5rem 1.5rem;
+    border-radius: 12px;
+    border: 2px dashed #198754;
+    display: inline-block;
+    user-select: all;
+}
+
+/* ===== Swipe Page ===== */
+.swipe-page {
+    min-height: calc(100vh - 60px);
+}
+
+.card-stack-container {
+    position: relative;
+    height: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    max-width: 380px;
+}
+
+/* ===== Name Cards ===== */
+.name-card {
+    position: absolute;
+    width: 320px;
+    height: 400px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    cursor: grab;
+    border: 1px solid #ffe0eb;
+    transform: translateY(var(--card-offset, 0px)) scale(calc(1 - var(--card-index, 0) * 0.03));
+    transition: box-shadow 0.2s;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.name-card-top {
+    cursor: grab;
+    transition: transform 0.05s;
+}
+.name-card-top:active { cursor: grabbing; }
+
+.name-card-inner {
+    text-align: center;
+    pointer-events: none;
+}
+.name-card-emoji { font-size: 3.5rem; margin-bottom: 1rem; }
+.name-card-fullname {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #2d2d2d;
+    line-height: 1.1;
+    margin: 0 0 0.5rem;
+}
+.name-card-firstname {
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Swipe indicators */
+.like-indicator, .pass-indicator {
+    position: absolute;
+    top: 28px;
+    font-size: 1.4rem;
+    font-weight: 800;
+    pointer-events: none;
+    transition: opacity 0.1s;
+    transform: rotate(-15deg);
+    border: 3px solid;
+    border-radius: 8px;
+    padding: 2px 12px;
+}
+.like-indicator {
+    right: 20px;
+    border-color: #198754;
+}
+.pass-indicator {
+    left: 20px;
+    border-color: #dc3545;
+    transform: rotate(15deg);
+}
+
+/* Swipe animations */
+.name-card.swipe-right {
+    animation: swipeRight 0.4s ease forwards;
+}
+.name-card.swipe-left {
+    animation: swipeLeft 0.4s ease forwards;
+}
+
+@keyframes swipeRight {
+    to { transform: translateX(120%) rotate(20deg); opacity: 0; }
+}
+@keyframes swipeLeft {
+    to { transform: translateX(-120%) rotate(-20deg); opacity: 0; }
+}
+
+/* ===== Action Buttons ===== */
+.action-buttons { gap: 2rem !important; }
+
+.action-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: none;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+.action-btn:hover {
+    transform: scale(1.1);
+}
+.action-btn:active { transform: scale(0.95); }
+
+.action-btn-pass {
+    background: white;
+    color: #dc3545;
+    border: 2px solid #f8d7da;
+}
+.action-btn-like {
+    background: linear-gradient(135deg, #ff6b9d, #ff4757);
+    color: white;
+}
+
+/* ===== Empty state ===== */
+.empty-state { max-width: 340px; margin: 0 auto; }
+
+/* ===== Match cards ===== */
+.match-card {
+    background: white;
+    border: 1px solid #ffe0eb;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.match-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255,107,157,0.2);
+}
+.match-emoji { font-size: 2rem; }
+
+/* ===== Match Toast ===== */
+.match-toast {
+    background: linear-gradient(135deg, #ff6b9d, #ff4757) !important;
+    border-radius: 12px;
+    min-width: 260px;
+}
+
+/* ===== Progress bar ===== */
+.progress-bar { transition: width 0.4s ease; }
+
+/* ===== Responsive ===== */
+@media (max-width: 480px) {
+    .name-card { width: 290px; height: 370px; }
+    .name-card-fullname { font-size: 1.7rem; }
+    .card-stack-container { height: 390px; }
+}

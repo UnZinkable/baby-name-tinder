@@ -1,0 +1,58 @@
+@{
+    ViewData["Title"] = "Set Up Your Name Hunt";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="auth-card p-4 rounded-4 shadow-sm">
+                <div class="text-center mb-4">
+                    <div style="font-size: 2.5rem;">🔗</div>
+                    <h2 class="fw-bold mt-2">Set Up Your Name Hunt</h2>
+                    <p class="text-muted">Configure your baby's details. Then invite your partner!</p>
+                </div>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger rounded-3">@ViewBag.Error</div>
+                }
+
+                <form asp-action="Create" asp-controller="Partner" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Baby's Last Name</label>
+                        <input type="text" name="lastName" class="form-control form-control-lg"
+                               placeholder="e.g. Johnson" required autofocus />
+                        <div class="form-text">This will appear on every name card you see.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Baby's Gender</label>
+                        <div class="d-flex gap-2">
+                            <input type="radio" class="btn-check" name="gender" id="genderGirl" value="girl" />
+                            <label class="btn btn-outline-pink flex-fill" for="genderGirl">👧 Girl</label>
+
+                            <input type="radio" class="btn-check" name="gender" id="genderBoy" value="boy" />
+                            <label class="btn btn-outline-blue flex-fill" for="genderBoy">👦 Boy</label>
+
+                            <input type="radio" class="btn-check" name="gender" id="genderBoth" value="both" checked />
+                            <label class="btn btn-outline-secondary flex-fill" for="genderBoth">🎁 Surprise</label>
+                        </div>
+                        <div class="form-text mt-1">This filters names shown to both partners.</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold">
+                        Create & Get Invite Code →
+                    </button>
+                </form>
+
+                <hr class="my-3" />
+                <p class="text-center text-muted small mb-0">
+                    Have a code from your partner?
+                    <a asp-action="Join" asp-controller="Partner" class="fw-semibold">Join instead</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

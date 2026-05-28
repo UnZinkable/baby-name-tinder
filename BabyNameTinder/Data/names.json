@@ -4265,6 +4265,1006 @@
     "meaning": "bird, little bird"
   },
   {
+    "name": "Amy",
+    "gender": "girl",
+    "meaning": "beloved, dearly loved"
+  },
+  {
+    "name": "Angela",
+    "gender": "girl",
+    "meaning": "messenger of God"
+  },
+  {
+    "name": "Angelica",
+    "gender": "girl",
+    "meaning": "angelic, divine"
+  },
+  {
+    "name": "April",
+    "gender": "girl",
+    "meaning": "opening buds of spring"
+  },
+  {
+    "name": "Barbara",
+    "gender": "girl",
+    "meaning": "foreign woman, traveler"
+  },
+  {
+    "name": "Belinda",
+    "gender": "girl",
+    "meaning": "beautiful and tender"
+  },
+  {
+    "name": "Bernadette",
+    "gender": "girl",
+    "meaning": "bold as a bear"
+  },
+  {
+    "name": "Betty",
+    "gender": "girl",
+    "meaning": "devoted to God"
+  },
+  {
+    "name": "Blanche",
+    "gender": "girl",
+    "meaning": "white and pure"
+  },
+  {
+    "name": "Brandy",
+    "gender": "girl",
+    "meaning": "brandywine, warm spirit"
+  },
+  {
+    "name": "Cara",
+    "gender": "girl",
+    "meaning": "beloved, dear friend"
+  },
+  {
+    "name": "Christy",
+    "gender": "girl",
+    "meaning": "follower of Christ"
+  },
+  {
+    "name": "Connie",
+    "gender": "girl",
+    "meaning": "steadfast and constant"
+  },
+  {
+    "name": "Courtney",
+    "gender": "girl",
+    "meaning": "from the court"
+  },
+  {
+    "name": "Deborah",
+    "gender": "girl",
+    "meaning": "bee, industrious"
+  },
+  {
+    "name": "Darlene",
+    "gender": "girl",
+    "meaning": "dear one, beloved"
+  },
+  {
+    "name": "Edna",
+    "gender": "girl",
+    "meaning": "pleasure, rejuvenation"
+  },
+  {
+    "name": "Eunice",
+    "gender": "girl",
+    "meaning": "good victory"
+  },
+  {
+    "name": "Faith",
+    "gender": "girl",
+    "meaning": "complete trust and belief"
+  },
+  {
+    "name": "Geneva",
+    "gender": "girl",
+    "meaning": "juniper tree"
+  },
+  {
+    "name": "Georgia",
+    "gender": "girl",
+    "meaning": "farmer, earth worker"
+  },
+  {
+    "name": "Geraldine",
+    "gender": "girl",
+    "meaning": "ruler with a spear"
+  },
+  {
+    "name": "Gina",
+    "gender": "girl",
+    "meaning": "queen, ever-living"
+  },
+  {
+    "name": "Gladys",
+    "gender": "girl",
+    "meaning": "princess, country"
+  },
+  {
+    "name": "Henrietta",
+    "gender": "girl",
+    "meaning": "ruler of the home"
+  },
+  {
+    "name": "Irma",
+    "gender": "girl",
+    "meaning": "whole, universal"
+  },
+  {
+    "name": "Janet",
+    "gender": "girl",
+    "meaning": "God is gracious"
+  },
+  {
+    "name": "Jill",
+    "gender": "girl",
+    "meaning": "youthful and lively"
+  },
+  {
+    "name": "Joyce",
+    "gender": "girl",
+    "meaning": "joyful, merry"
+  },
+  {
+    "name": "Judith",
+    "gender": "girl",
+    "meaning": "woman of Judea, praised"
+  },
+  {
+    "name": "Kathleen",
+    "gender": "girl",
+    "meaning": "pure"
+  },
+  {
+    "name": "Kelsey",
+    "gender": "girl",
+    "meaning": "island of ships"
+  },
+  {
+    "name": "Kimberly",
+    "gender": "girl",
+    "meaning": "meadow of the royal fortress"
+  },
+  {
+    "name": "Kristin",
+    "gender": "girl",
+    "meaning": "follower of Christ"
+  },
+  {
+    "name": "Loretta",
+    "gender": "girl",
+    "meaning": "little laurel"
+  },
+  {
+    "name": "Mae",
+    "gender": "girl",
+    "meaning": "month of May, great one"
+  },
+  {
+    "name": "Marcella",
+    "gender": "girl",
+    "meaning": "little warrior"
+  },
+  {
+    "name": "Marcia",
+    "gender": "girl",
+    "meaning": "warlike, strong"
+  },
+  {
+    "name": "May",
+    "gender": "girl",
+    "meaning": "great one, born in May"
+  },
+  {
+    "name": "Mindy",
+    "gender": "girl",
+    "meaning": "sweet, gentle"
+  },
+  {
+    "name": "Misty",
+    "gender": "girl",
+    "meaning": "covered in mist"
+  },
+  {
+    "name": "Muriel",
+    "gender": "girl",
+    "meaning": "sea-bright"
+  },
+  {
+    "name": "Myrtle",
+    "gender": "girl",
+    "meaning": "evergreen shrub"
+  },
+  {
+    "name": "Norma",
+    "gender": "girl",
+    "meaning": "the standard, norm"
+  },
+  {
+    "name": "Paula",
+    "gender": "girl",
+    "meaning": "small, humble"
+  },
+  {
+    "name": "Phyllis",
+    "gender": "girl",
+    "meaning": "green branch, foliage"
+  },
+  {
+    "name": "Polly",
+    "gender": "girl",
+    "meaning": "bitter, star of the sea"
+  },
+  {
+    "name": "Rhonda",
+    "gender": "girl",
+    "meaning": "noisy one, good lance"
+  },
+  {
+    "name": "Rita",
+    "gender": "girl",
+    "meaning": "pearl"
+  },
+  {
+    "name": "Sally",
+    "gender": "girl",
+    "meaning": "princess"
+  },
+  {
+    "name": "Sherry",
+    "gender": "girl",
+    "meaning": "beloved, dear"
+  },
+  {
+    "name": "Shirley",
+    "gender": "girl",
+    "meaning": "bright clearing"
+  },
+  {
+    "name": "Stacy",
+    "gender": "girl",
+    "meaning": "resurrection"
+  },
+  {
+    "name": "Tammy",
+    "gender": "girl",
+    "meaning": "twin"
+  },
+  {
+    "name": "Tara",
+    "gender": "girl",
+    "meaning": "rocky hill, star"
+  },
+  {
+    "name": "Terri",
+    "gender": "girl",
+    "meaning": "harvester"
+  },
+  {
+    "name": "Tina",
+    "gender": "girl",
+    "meaning": "river, follower of Christ"
+  },
+  {
+    "name": "Tracy",
+    "gender": "girl",
+    "meaning": "from Thracia, warlike"
+  },
+  {
+    "name": "Wendy",
+    "gender": "girl",
+    "meaning": "friend"
+  },
+  {
+    "name": "Shawna",
+    "gender": "girl",
+    "meaning": "God is gracious"
+  },
+  {
+    "name": "Kara",
+    "gender": "girl",
+    "meaning": "beloved, friend"
+  },
+  {
+    "name": "Kim",
+    "gender": "girl",
+    "meaning": "from the meadow"
+  },
+  {
+    "name": "Mandy",
+    "gender": "girl",
+    "meaning": "worthy of love"
+  },
+  {
+    "name": "Lori",
+    "gender": "girl",
+    "meaning": "crowned with laurel"
+  },
+  {
+    "name": "Annette",
+    "gender": "girl",
+    "meaning": "grace and favor"
+  },
+  {
+    "name": "Cheryl",
+    "gender": "girl",
+    "meaning": "beloved"
+  },
+  {
+    "name": "Bernice",
+    "gender": "girl",
+    "meaning": "she who brings victory"
+  },
+  {
+    "name": "Bertha",
+    "gender": "girl",
+    "meaning": "bright, famous"
+  },
+  {
+    "name": "Dora",
+    "gender": "girl",
+    "meaning": "gift, gift of God"
+  },
+  {
+    "name": "Alivia",
+    "gender": "girl",
+    "meaning": "noble, alive"
+  },
+  {
+    "name": "Amiyah",
+    "gender": "girl",
+    "meaning": "close to God"
+  },
+  {
+    "name": "Brynna",
+    "gender": "girl",
+    "meaning": "hill, strong"
+  },
+  {
+    "name": "Capri",
+    "gender": "girl",
+    "meaning": "wild, free spirit"
+  },
+  {
+    "name": "Cierra",
+    "gender": "girl",
+    "meaning": "saw, mountain range"
+  },
+  {
+    "name": "Corinne",
+    "gender": "girl",
+    "meaning": "maiden"
+  },
+  {
+    "name": "Everly",
+    "gender": "girl",
+    "meaning": "ever-beloved meadow"
+  },
+  {
+    "name": "Jessie",
+    "gender": "girl",
+    "meaning": "God sees"
+  },
+  {
+    "name": "Jodie",
+    "gender": "girl",
+    "meaning": "praised"
+  },
+  {
+    "name": "Anaya",
+    "gender": "girl",
+    "meaning": "completely free"
+  },
+  {
+    "name": "Alianna",
+    "gender": "girl",
+    "meaning": "noble grace"
+  },
+  {
+    "name": "Allie",
+    "gender": "girl",
+    "meaning": "noble"
+  },
+  {
+    "name": "Andie",
+    "gender": "girl",
+    "meaning": "strong and manly"
+  },
+  {
+    "name": "Aura",
+    "gender": "girl",
+    "meaning": "luminous glow"
+  },
+  {
+    "name": "Azaria",
+    "gender": "girl",
+    "meaning": "helped by God"
+  },
+  {
+    "name": "Annora",
+    "gender": "girl",
+    "meaning": "honor and light"
+  },
+  {
+    "name": "Adria",
+    "gender": "girl",
+    "meaning": "from the Adriatic Sea"
+  },
+  {
+    "name": "Alecia",
+    "gender": "girl",
+    "meaning": "noble"
+  },
+  {
+    "name": "Alena",
+    "gender": "girl",
+    "meaning": "bright and beautiful"
+  },
+  {
+    "name": "Alexa",
+    "gender": "girl",
+    "meaning": "defender of the people"
+  },
+  {
+    "name": "Alexia",
+    "gender": "girl",
+    "meaning": "defender"
+  },
+  {
+    "name": "Alisa",
+    "gender": "girl",
+    "meaning": "noble"
+  },
+  {
+    "name": "Amberly",
+    "gender": "girl",
+    "meaning": "warm golden resin"
+  },
+  {
+    "name": "Amie",
+    "gender": "girl",
+    "meaning": "beloved friend"
+  },
+  {
+    "name": "Angie",
+    "gender": "girl",
+    "meaning": "messenger of God"
+  },
+  {
+    "name": "Anise",
+    "gender": "girl",
+    "meaning": "spice, sweet herb"
+  },
+  {
+    "name": "Annalise",
+    "gender": "girl",
+    "meaning": "grace and devotion"
+  },
+  {
+    "name": "Antonia",
+    "gender": "girl",
+    "meaning": "praiseworthy, priceless"
+  },
+  {
+    "name": "Arissa",
+    "gender": "girl",
+    "meaning": "best, excellence"
+  },
+  {
+    "name": "Arlene",
+    "gender": "girl",
+    "meaning": "pledge, oath"
+  },
+  {
+    "name": "Arlette",
+    "gender": "girl",
+    "meaning": "pledge, eagle"
+  },
+  {
+    "name": "Aurelia",
+    "gender": "girl",
+    "meaning": "golden"
+  },
+  {
+    "name": "Ayala",
+    "gender": "girl",
+    "meaning": "deer, gazelle"
+  },
+  {
+    "name": "Bea",
+    "gender": "girl",
+    "meaning": "voyager, bringer of joy"
+  },
+  {
+    "name": "Becca",
+    "gender": "girl",
+    "meaning": "captivating"
+  },
+  {
+    "name": "Belle",
+    "gender": "girl",
+    "meaning": "beautiful"
+  },
+  {
+    "name": "Bette",
+    "gender": "girl",
+    "meaning": "devoted to God"
+  },
+  {
+    "name": "Birdie",
+    "gender": "girl",
+    "meaning": "little bird, bright"
+  },
+  {
+    "name": "Bree",
+    "gender": "girl",
+    "meaning": "strength, exalted"
+  },
+  {
+    "name": "Bria",
+    "gender": "girl",
+    "meaning": "strength and virtue"
+  },
+  {
+    "name": "Briana",
+    "gender": "girl",
+    "meaning": "strong and virtuous"
+  },
+  {
+    "name": "Briley",
+    "gender": "girl",
+    "meaning": "briar meadow"
+  },
+  {
+    "name": "Camberly",
+    "gender": "girl",
+    "meaning": "beautiful meadow bend"
+  },
+  {
+    "name": "Caris",
+    "gender": "girl",
+    "meaning": "grace, love"
+  },
+  {
+    "name": "Carissa",
+    "gender": "girl",
+    "meaning": "beloved, grace"
+  },
+  {
+    "name": "Carmela",
+    "gender": "girl",
+    "meaning": "garden, vineyard of God"
+  },
+  {
+    "name": "Carolee",
+    "gender": "girl",
+    "meaning": "joyful free woman"
+  },
+  {
+    "name": "Celine",
+    "gender": "girl",
+    "meaning": "heaven, moon"
+  },
+  {
+    "name": "Chantelle",
+    "gender": "girl",
+    "meaning": "stone, song"
+  },
+  {
+    "name": "Charis",
+    "gender": "girl",
+    "meaning": "grace, kindness"
+  },
+  {
+    "name": "Charissa",
+    "gender": "girl",
+    "meaning": "grace, kindness"
+  },
+  {
+    "name": "Charmaine",
+    "gender": "girl",
+    "meaning": "orchard, charming"
+  },
+  {
+    "name": "Clarice",
+    "gender": "girl",
+    "meaning": "bright and clear"
+  },
+  {
+    "name": "Flora",
+    "gender": "girl",
+    "meaning": "flower, goddess of flowers"
+  },
+  {
+    "name": "Blossom",
+    "gender": "girl",
+    "meaning": "flower in bloom"
+  },
+  {
+    "name": "Fawn",
+    "gender": "girl",
+    "meaning": "young deer, gentle"
+  },
+  {
+    "name": "Petal",
+    "gender": "girl",
+    "meaning": "flower petal, delicate"
+  },
+  {
+    "name": "Maple",
+    "gender": "girl",
+    "meaning": "maple tree, sweet"
+  },
+  {
+    "name": "Tulip",
+    "gender": "girl",
+    "meaning": "turban flower, spring bloom"
+  },
+  {
+    "name": "Snowdrop",
+    "gender": "girl",
+    "meaning": "white winter flower"
+  },
+  {
+    "name": "Aster",
+    "gender": "girl",
+    "meaning": "star flower"
+  },
+  {
+    "name": "Amaranth",
+    "gender": "girl",
+    "meaning": "unfading flower, immortal"
+  },
+  {
+    "name": "Amethyst",
+    "gender": "girl",
+    "meaning": "purple gemstone, not intoxicated"
+  },
+  {
+    "name": "Topaz",
+    "gender": "girl",
+    "meaning": "golden gemstone"
+  },
+  {
+    "name": "Diamond",
+    "gender": "girl",
+    "meaning": "precious and unbreakable"
+  },
+  {
+    "name": "Beryl",
+    "gender": "girl",
+    "meaning": "precious pale green gem"
+  },
+  {
+    "name": "Lois",
+    "gender": "girl",
+    "meaning": "superior, more desirable"
+  },
+  {
+    "name": "Rebekah",
+    "gender": "girl",
+    "meaning": "captivating, to bind"
+  },
+  {
+    "name": "Susanna",
+    "gender": "girl",
+    "meaning": "lily"
+  },
+  {
+    "name": "Tamar",
+    "gender": "girl",
+    "meaning": "date palm tree"
+  },
+  {
+    "name": "Rhoda",
+    "gender": "girl",
+    "meaning": "rose"
+  },
+  {
+    "name": "Patrice",
+    "gender": "girl",
+    "meaning": "noble, patrician"
+  },
+  {
+    "name": "Rosie",
+    "gender": "girl",
+    "meaning": "little rose"
+  },
+  {
+    "name": "Verna",
+    "gender": "girl",
+    "meaning": "spring, alder tree"
+  },
+  {
+    "name": "Ernestine",
+    "gender": "girl",
+    "meaning": "serious, earnest"
+  },
+  {
+    "name": "Hildegard",
+    "gender": "girl",
+    "meaning": "battle fortress"
+  },
+  {
+    "name": "Salome",
+    "gender": "girl",
+    "meaning": "peace"
+  },
+  {
+    "name": "Rosalee",
+    "gender": "girl",
+    "meaning": "rose meadow"
+  },
+  {
+    "name": "Mahalia",
+    "gender": "girl",
+    "meaning": "tender affection"
+  },
+  {
+    "name": "Edwina",
+    "gender": "girl",
+    "meaning": "wealthy friend"
+  },
+  {
+    "name": "Leticia",
+    "gender": "girl",
+    "meaning": "joy and gladness"
+  },
+  {
+    "name": "Thalia",
+    "gender": "girl",
+    "meaning": "to bloom, joyful muse"
+  },
+  {
+    "name": "Clio",
+    "gender": "girl",
+    "meaning": "glory and fame, muse of history"
+  },
+  {
+    "name": "Adina",
+    "gender": "girl",
+    "meaning": "slender, gentle"
+  },
+  {
+    "name": "Celena",
+    "gender": "girl",
+    "meaning": "moon goddess"
+  },
+  {
+    "name": "Elisa",
+    "gender": "girl",
+    "meaning": "pledged to God"
+  },
+  {
+    "name": "Ellery",
+    "gender": "girl",
+    "meaning": "cheerful, alder tree"
+  },
+  {
+    "name": "Elva",
+    "gender": "girl",
+    "meaning": "elf, magical being"
+  },
+  {
+    "name": "Evadne",
+    "gender": "girl",
+    "meaning": "pleasing water"
+  },
+  {
+    "name": "Eveline",
+    "gender": "girl",
+    "meaning": "wished-for child"
+  },
+  {
+    "name": "Glynnis",
+    "gender": "girl",
+    "meaning": "from the valley"
+  },
+  {
+    "name": "Golda",
+    "gender": "girl",
+    "meaning": "made of gold"
+  },
+  {
+    "name": "Isaura",
+    "gender": "girl",
+    "meaning": "gentle breeze"
+  },
+  {
+    "name": "Isis",
+    "gender": "girl",
+    "meaning": "goddess of magic and life"
+  },
+  {
+    "name": "Beatrix",
+    "gender": "girl",
+    "meaning": "voyager, she who brings happiness"
+  },
+  {
+    "name": "Celandine",
+    "gender": "girl",
+    "meaning": "swallow, yellow flower"
+  },
+  {
+    "name": "Clotilde",
+    "gender": "girl",
+    "meaning": "famous in battle"
+  },
+  {
+    "name": "Davina",
+    "gender": "girl",
+    "meaning": "beloved"
+  },
+  {
+    "name": "Dorinda",
+    "gender": "girl",
+    "meaning": "gift, wonderful"
+  },
+  {
+    "name": "Eulah",
+    "gender": "girl",
+    "meaning": "well-spoken"
+  },
+  {
+    "name": "Euphemia",
+    "gender": "girl",
+    "meaning": "well-spoken, good reputation"
+  },
+  {
+    "name": "Fannie",
+    "gender": "girl",
+    "meaning": "free one"
+  },
+  {
+    "name": "Fenella",
+    "gender": "girl",
+    "meaning": "fair-shouldered"
+  },
+  {
+    "name": "Gail",
+    "gender": "girl",
+    "meaning": "my father rejoices"
+  },
+  {
+    "name": "Genevieve",
+    "gender": "girl",
+    "meaning": "woman of the race, tribe woman"
+  },
+  {
+    "name": "Georgette",
+    "gender": "girl",
+    "meaning": "farmer, earth worker"
+  },
+  {
+    "name": "Gillian",
+    "gender": "girl",
+    "meaning": "youthful, downy"
+  },
+  {
+    "name": "Giovanna",
+    "gender": "girl",
+    "meaning": "God is gracious"
+  },
+  {
+    "name": "Gisela",
+    "gender": "girl",
+    "meaning": "pledge, hostage"
+  },
+  {
+    "name": "Gretel",
+    "gender": "girl",
+    "meaning": "pearl"
+  },
+  {
+    "name": "Helene",
+    "gender": "girl",
+    "meaning": "shining light"
+  },
+  {
+    "name": "Hermione",
+    "gender": "girl",
+    "meaning": "messenger, earthly"
+  },
+  {
+    "name": "Hestia",
+    "gender": "girl",
+    "meaning": "goddess of the hearth"
+  },
+  {
+    "name": "Honoria",
+    "gender": "girl",
+    "meaning": "dignity and honor"
+  },
+  {
+    "name": "Hypatia",
+    "gender": "girl",
+    "meaning": "highest, supreme"
+  },
+  {
+    "name": "Issa",
+    "gender": "girl",
+    "meaning": "God is salvation"
+  },
+  {
+    "name": "Ivana",
+    "gender": "girl",
+    "meaning": "God is gracious"
+  },
+  {
+    "name": "Jacinda",
+    "gender": "girl",
+    "meaning": "hyacinth flower"
+  },
+  {
+    "name": "Jemima",
+    "gender": "girl",
+    "meaning": "dove, little dove"
+  },
+  {
+    "name": "Jovanna",
+    "gender": "girl",
+    "meaning": "God is gracious"
+  },
+  {
+    "name": "Kiana",
+    "gender": "girl",
+    "meaning": "divine, ancient"
+  },
+  {
+    "name": "Laramie",
+    "gender": "girl",
+    "meaning": "canopy of leafy branches"
+  },
+  {
+    "name": "Leandra",
+    "gender": "girl",
+    "meaning": "lioness"
+  },
+  {
+    "name": "Leonie",
+    "gender": "girl",
+    "meaning": "lioness"
+  },
+  {
+    "name": "Leora",
+    "gender": "girl",
+    "meaning": "my light"
+  },
+  {
+    "name": "Letty",
+    "gender": "girl",
+    "meaning": "joy and gladness"
+  },
+  {
+    "name": "Lucille",
+    "gender": "girl",
+    "meaning": "light"
+  },
+  {
+    "name": "Luella",
+    "gender": "girl",
+    "meaning": "famous elf"
+  },
+  {
+    "name": "Luisa",
+    "gender": "girl",
+    "meaning": "famous warrior"
+  },
+  {
+    "name": "Lula",
+    "gender": "girl",
+    "meaning": "famous warrior"
+  },
+  {
+    "name": "Lux",
+    "gender": "girl",
+    "meaning": "light"
+  },
+  {
     "name": "Avery",
     "gender": "neutral",
     "meaning": "ruler of the elves"

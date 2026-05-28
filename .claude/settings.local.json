@@ -40,7 +40,9 @@
       "Bash(git commit -m 'Add name meanings to swipe cards *)",
       "Bash(git push *)",
       "Bash(git commit -m 'Add My Votes page and reset votes feature *)",
-      "Bash(git commit -m 'Add undo last swipe *)"
+      "Bash(git commit -m 'Add undo last swipe *)",
+      "Bash(python3 -c ' *)",
+      "PowerShell(cd \"C:\\\\Users\\\\kuram\\\\Desktop\\\\Baby Name Tinder\"; $json = Get-Content \"BabyNameTinder\\\\Data\\\\names.json\" -Raw | ConvertFrom-Json; $girls = $json | Where-Object { $_.gender -eq \"girl\" }; $boys = $json | Where-Object { $_.gender -eq \"boy\" }; $neutral = $json | Where-Object { $_.gender -eq \"neutral\" }; Write-Host \"Girls: $\\($girls.Count\\)  Boys: $\\($boys.Count\\)  Neutral: $\\($neutral.Count\\)  Total: $\\($json.Count\\)\")"
     ]
   }
 }

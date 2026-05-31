@@ -5,7 +5,6 @@
     var isLinked         = (bool)(ViewBag.IsLinked ?? false);
     var totalCount       = (int)(ViewBag.TotalCount ?? 0);
     var votedCount       = (int)(ViewBag.VotedCount ?? 0);
-    var prioritizedCount = (int)(ViewBag.PrioritizedCount ?? 0);
     var ranks            = ViewBag.Ranks as Dictionary<string, int> ?? new();
     var meaningsJson     = ViewBag.MeaningsJson as string ?? "{}";
     var meanings         = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(meaningsJson) ?? new();
@@ -22,12 +21,6 @@
                 Partner hasn't joined yet. Share your invite code from the
                 <a asp-controller="Partner" asp-action="Dashboard" class="fw-semibold">Partner Dashboard</a>.
                 Your likes will be saved!
-            </div>
-        }
-        else if (prioritizedCount > 0)
-        {
-            <div class="alert alert-pink text-center rounded-4 mb-3 py-2 small">
-                💕 Smart ordering on — names your partner already likes are up first!
             </div>
         }
 

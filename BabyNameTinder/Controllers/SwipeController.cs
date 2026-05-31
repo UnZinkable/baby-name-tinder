@@ -41,9 +41,7 @@ public class SwipeController : Controller
         var votedSet = new HashSet<string>(myVotes.Votes.Keys, StringComparer.OrdinalIgnoreCase);
         var unvoted  = _names.GetUnvotedNames(partnership.Gender, UserId, votedSet);
 
-        // ── Partner-liked names first ──────────────────────────────────────────
-        // Load partner's votes and bubble up names they liked so matches
-        // are discovered as early as possible.
+        // ── Sprinkle partner-liked names through the deck ─────────────────────
         var partnerLiked = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         if (partnership.IsComplete)
         {
@@ -53,10 +51,34 @@ public class SwipeController : Controller
                 if (kv.Value) partnerLiked.Add(kv.Key);
         }
 
-        // Partition: names partner already liked → front; everything else → back
         var prioritized = unvoted.Where(n =>  partnerLiked.Contains(n)).ToList();
         var rest        = unvoted.Where(n => !partnerLiked.Contains(n)).ToList();
-        unvoted = prioritized.Concat(rest).ToList();
+
+        if (prioritized.Count > 0 && rest.Count > 0)
+        {
+            // Weave partner-liked names in at regular intervals so they appear
+            // throughout the session rather than all bunched at the front.
+            var interleaved = new List<string>(unvoted.Count);
+            int interval = Math.Max(3, rest.Count / (prioritized.Count + 1));
+            int restIdx  = 0;
+            int prioIdx  = 0;
+
+            while (restIdx < rest.Count || prioIdx < prioritized.Count)
+            {
+                int take = Math.Min(interval, rest.Count - restIdx);
+                for (int j = 0; j < take; j++)
+                    interleaved.Add(rest[restIdx++]);
+
+                if (prioIdx < prioritized.Count)
+                    interleaved.Add(prioritized[prioIdx++]);
+            }
+
+            unvoted = interleaved;
+        }
+        else
+        {
+            unvoted = prioritized.Concat(rest).ToList();
+        }
 
         // ── Popularity ranks ───────────────────────────────────────────────────
         var ranks = _names.GetRanks(partnership.Gender);
@@ -68,7 +90,6 @@ public class SwipeController : Controller
         ViewBag.TotalCount        = _names.GetNames(partnership.Gender, UserId).Count;
         ViewBag.VotedCount        = votedSet.Count;
         ViewBag.IsLinked          = partnership.IsComplete;
-        ViewBag.PrioritizedCount  = prioritized.Count;   // used to show the smart-sort hint
         ViewBag.Ranks             = ranks;
         ViewBag.RanksJson         = JsonSerializer.Serialize(ranks);
         ViewBag.MeaningsJson      = JsonSerializer.Serialize(meanings);
